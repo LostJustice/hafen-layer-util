@@ -8,8 +8,10 @@
     :components ((:file "packages")
                  (:file "const"
                         :depends-on ("packages"))
-                 (:file "layers"
+                 (:file "util" 
                         :depends-on ("const"))
+                 (:file "layers"
+                        :depends-on ("util"))
                  (:file "resource" 
                         :depends-on ("layers"))
                  (:file "salem-layer-util" 
