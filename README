@@ -15,8 +15,7 @@ You'll need to find yourself a Common Lisp compiler of your choice (SBCL,CMUCL,C
 
 Usage
 =====
-<pre>
-(documentation 'salem-layer-util:run 'function)
+* Start up sbcl in the directory in the directory you wish to work relative from
 (salem-layer-util:run KEYS)
 Possible KEYS include:
  (:mode              Determines the mode of the program 
@@ -53,6 +52,6 @@ Sample Usage:
 ;;Encode only new res/cache files from dec folder into res folder
 (salem-layer-util:run :mode :ea
                       :args '("dec" "res"))
-</pre>
+
 
 Skipping of older files is based completely off last modified date times
