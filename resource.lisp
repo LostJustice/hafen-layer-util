@@ -1,6 +1,6 @@
 ;;;; 
 
-(in-package :slayer-util)
+(in-package :salem-layer-util)
 
 (defconstant +resource-sig+ "Haven Resource 1")
 (defconstant +resource-sig-octets+ (string-to-octets +resource-sig+))
@@ -50,7 +50,6 @@
     ("codeentry" . (,#'make-file-codeentry . 17))
     ("audio"     . (,#'make-file-audio     . 18))
     ("midi"      . (,#'make-file-midi      . 19))))
-(defconstant +layer-length+ (length *file-layer-callback*))
 
 (defun read-times (io n)
   "Read in N bytes from IO stream"
@@ -87,7 +86,7 @@
         (write-line (write-to-string ver) io-meta)))
     ;;Scan for layers
     (let ((sbuf "")
-          (lc (make-array +layer-length+
+          (lc (make-array (length *file-layer-callback*)
                           :initial-element 0)))
       (do ((i (read-byte in nil -1)
               (read-byte in nil -1)))
@@ -170,7 +169,6 @@
                 (format t "  Encoding Layer[~A#~A]...~%" (car layer-cb) i))
               ;;encode layer name
               (write-sequence (str->ubarr (car layer-cb)) out-io)
-              (write-byte #x00 out-io)
               ;;encode its data
               (funcall (car (cdr layer-cb)) 
                        (concatenate 'string

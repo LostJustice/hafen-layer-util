@@ -1,4 +1,4 @@
-(in-package :slayer-util)
+(in-package :salem-layer-util)
 
 ;; simple macro for maintaining repeativeness from each layer
 (defmacro deflayer (name type &body body)
@@ -740,12 +740,12 @@ buffer  => An array that shall old all the written bytes before actually being
     ;;(write-till buf out 0 (1- (length buf)))))
 
 ;;Midi layer
-;;Produces: #.music - binary format
+;;Produces: #.midi - binary format
 ;;Contains: BUFFER - raw : midi format
 (deflayer make-fold-midi :none
   (with-open-file (out (concatenate 'string
                                     io
-                                    ".music")
+                                    ".midi")
                        :direction :output
                        :if-exists :supersede
                        :element-type 'unsigned-byte)

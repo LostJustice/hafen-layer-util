@@ -1,8 +1,4 @@
-;;;;
-;;;;TODO: decode-files/encode-files 
-;;;;      finish file layers
-;;;;      entire folder system
-(in-package :slayer-util)
+(in-package :salem-layer-util)
 
 (defparameter *skip-old* t)
 (defparameter *print-skip* nil)
@@ -88,31 +84,38 @@
 ;;DA
 (defun decode-files (files out-fold)
   "Decodes the list of FILES into OUTF"
-  ;;loop throuhg entire list
-  (dolist (file files)
-    ;;resolve output location
-    (let ((outf  (subseq (directory-namestring file)
-                         (length (directory-namestring *default-pathname-defaults*))))
-          (out-file ""))
-      (if (null (search "/" outf))
-          (setf out-file (concatenate 'string
-                                      out-fold
-                                      "/"
-                                      outf
-                                      "/"
-                                      (pathname-name file)
+  (let ((len (length files))
+        (i 0))
+    (format t "Processing: ~A files~%" len)
+    ;;loop throuhg entire list
+    (dolist (file files)
+      ;;progress report for non-verbose
+      (incf i)
+      (when (not *verbose*)
+        (format t "File: ~A/~A~%" i len))
+      ;;resolve output location
+      (let ((outf  (subseq (directory-namestring file)
+                           (length (directory-namestring *default-pathname-defaults*))))
+            (out-file ""))
+        (if (null (search "/" outf))
+            (setf out-file (concatenate 'string
+                                        out-fold
+                                        "/"
+                                        outf
+                                        "/"
+                                        (pathname-name file)
                                         ".res/"))
-          (setf out-file (concatenate 'string
-                                      out-fold
-                                      (subseq outf (search "/" outf))
-                                      (pathname-name file)
-                                      ".res/")))
-      ;;check timestamps
-      (if (or (not *skip-old*)
+            (setf out-file (concatenate 'string
+                                        out-fold
+                                        (subseq outf (search "/" outf))
+                                        (pathname-name file)
+                                        ".res/")))
+        ;;check timestamps
+        (if (or (not *skip-old*)
               (> (get-date file) (get-date out-file)))
-          (load-resource-by-res file out-file)
-          (when *print-skip*
-            (format t "Skipping: ~A, too old.~%" file))))))
+            (load-resource-by-res file out-file)
+            (when *print-skip*
+              (format t "Skipping: ~A, too old.~%" file)))))))
 ;;E
 (defun encode-file (files out-fold)
   (values files out-fold)
@@ -154,25 +157,34 @@
       
             
 
-;;; slayer-util
+;;; salem-layer-util
 
 (defun run (&key (mode :d) (skip-old t) (verbose t) (print-skip nil) (threads 1) (args ()))
-  "slayer-util version - 0.5.0
-Usage: (slayer-util:run KEYS)
+  "salem-layer-util version - 0.5.0
+Usage: (salem-layer-util:run KEYS)
 Possible KEYS include:
- -:mode              Determines the mode of the program
+ (:mode              Determines the mode of the program 
+                      [DEFAULT-VALUE: :d]
    Possible modes include:
-    -:d              Decodes file(s) given through ARGS
-    -:e              Encodes file(s) given through ARGS
-    -:da             Decodes a set of files within a specified directory into another
-    -:ea             Encodes a set of files within a specified directory into another
-   Note: for :da and :ea the two directories needed should be provided through &rest ARGS
- -:skip-old          Skip processing older files
- -:verbose           Be verbose
- -:print-skip        Print skipped files
- -:threads           Number of threads to execute decoding/encoding of files
+    :d              Decodes file(s) given through ARGS by list of pathnames
+                     default output folder: dout
+    :e              Encodes file(s) given through ARGS by list of pathnames
+                     default output folder: dres
+    :da             Decodes a set of files within a specified directory into another
+    :ea             Encodes a set of files within a specified directory into another)
+   Note: for :da and :ea the two directories needed should be provided through &key args
+         first arg within the args list should be source-folder
+         second arg within the args list should be result-folder
+ (:skip-old t/nil)   Skip processing older files
+                      [DEFAULT-VALUE: t]
+ (:verbose t/nil)    Be verbose 
+                      [DEFAULT-VALUE: t]
+ (:print-skip t/nil) Print skipped files 
+                      [DEFAULT-VALUE: nil]
+ (:threads n)        Number of threads to execute decoding/encoding of files 
+                      [DEFAULT-VALUE: 1]
                       As of right now threads key doesn't change anything.
- -:args              A list of arguments for the mode given"
+ (:args '(...))      A list of arguments for the mode given"
   (when (zerop (length args))
     (princ (documentation 'run 'function))
     (return-from run nil))
