@@ -1,0 +1,58 @@
+Salem Layer Util
+================
+
+Salem Layer Util is a resource utility for decoding and encoding the Salem resource files (.res/.cache)
+
+Install
+=======
+It's written in Common Lisp using Babel package.
+You'll need to find yourself a Common Lisp compiler of your choice (SBCL,CMUCL,CLISP, etc)
+
+* cd "location-to-install"
+* git clone git://github.com/boshaw/salem-layer-util.git
+* sbcl
+* (asdf:operate 'asdf:load-op 'salem-layer-util)
+
+Usage
+=====
+<pre>
+(documentation 'salem-layer-util:run 'function)
+(salem-layer-util:run KEYS)
+Possible KEYS include:
+ (:mode              Determines the mode of the program 
+                      [DEFAULT-VALUE: :d]
+   Possible modes include:
+    :d              Decodes file(s) given through ARGS by list of pathnames
+                     default output folder: dout
+    :e              Encodes file(s) given through ARGS by list of pathnames
+                     default output folder: dres
+    :da             Decodes a set of files within a specified directory into another
+    :ea             Encodes a set of files within a specified directory into another)
+   Note: for :da and :ea the two directories needed should be provided through &key args
+         first arg within the args list should be source-folder
+         second arg within the args list should be result-folder
+ (:skip-old t/nil)   Skip processing older files 
+                      [DEFAULT-VALUE: t]
+ (:verbose t/nil)    Be verbose 
+                      [DEFAULT-VALUE: t]
+ (:print-skip t/nil) Print skipped files 
+                      [DEFAULT-VALUE: nil]
+ (:threads n)        Number of threads to execute decoding/encoding of files 
+                      [DEFAULT-VALUE: 1]
+                      As of right now threads key doesn't change anything.
+ (:args '(...))      A list of arguments for the mode given
+
+Sample Usage:
+;;Decode two files: res/[1,2].res into dout
+(salem-layer-util:run :mode :d
+                      :args '("res/1.res" "res/2.res"))
+;;Decode all res/cache files from res folder into dec folder
+(salem-layer-util:run :mode :da
+                      :skip-old nil
+                      :args '("res" "dec"))
+;;Encode only new res/cache files from dec folder into res folder
+(salem-layer-util:run :mode :ea
+                      :args '("dec" "res"))
+</pre>
+
+Skipping of older files is based completely off last modified date times
