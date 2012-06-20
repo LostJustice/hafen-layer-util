@@ -193,8 +193,8 @@ Possible KEYS include:
   (setf *verbose* verbose)
   (setf *print-skip* print-skip)
   (case mode
-    (:d  (decode-file args "dout"))
-    (:e  (encode-file args "dres"))
+    (:d  (decode-file args "dout/"))
+    (:e  (encode-file args "dres/"))
     (:da (decode-files (car (solve-files (car args) threads)) 
                        (car (cdr args))))
     (:ea (encode-files (car (solve-files (car args) threads))

@@ -664,67 +664,45 @@ buffer  => An array that shall old all the written bytes before actually being
 ;;                          String - cn [Notes: final cn is "\0"]
 ;;                loop t=2: String - ln [Notes: final ln is "\0"]
 ;;                          uint16 - ver
-;;TODO: consider redoing this, ugly mess
 (deflayer make-fold-codeentry :data
   (write-line ";CodeEntry Layer data file" out)
-  (do ()
-      ((>= off (length buf)))
-    ;;read in type
+  (while (< off (length buf))
+    ;;uint8 t
     (let ((type (aref buf off)))
-      ;;write data
-      (write-line ";Data Type [t]:[unsigned-byte (1-2)]" out)
-      (write-line (write-to-string type) out)
       (incf off)
+      (write-line ";Data Type [t]:[unsigned-byte (1-2)]:" out)
+      (write-line (write-to-string type) out)
       ;;parse type
       (case type
+        ;;loop t=1
         (1 (block t-1-loop
              (loop
-                ;;read in first str
-                (multiple-value-bind (en nof0)
-                    (read-str buf off)
-                  (setf off nof0)
-                  ;;Break out if no more
+                ;;String en
+                (multiple-value-bind (noff en)
+                    (rw-str buf off out ";String [EN]:")
+                  ;String cn
+                  (setf noff (rw-str buf noff out ";String [CN]:"))
                   (when (zerop (length en))
-                    ;;Final EN/CN are '\0' TODO: properly fix this layer
                     (write-line 
-                     ";Note: Final [EN/CN] lines must be blank as followed"
-                     out)
-                    (write-line ";String [EN]" out)
-                    (write-line "" out)
-                    (write-line ";String [CN]" out)
-                    (write-line "" out)
-                    (incf off) ;skip cn
+                     ";Note: Final [EN/CN] lines must be blank as seen above" out)
+                    (setf off noff)
                     (return-from t-1-loop))
-                  ;;read in next str
-                  (multiple-value-bind (cn noff)
-                      (read-str buf off)
-                    ;;write data
-                    (write-line ";String [EN]" out)
-                    (write-line en out)
-                    (write-line ";String [CN]" out)
-                    (write-line cn out)
-                    (setf off noff))))))
+                  (setf off noff)))))
+        ;;loop t=2
         (2 (block t-2-loop
              (loop
-                ;;read in first str
-                (multiple-value-bind (ln noff)
-                    (read-str buf off)
-                  (setf off noff) 
-                  ;;break out if no more
+                ;;String ln
+                (multiple-value-bind (noff ln)
+                    (rw-str buf off out ";String [LN]:")
                   (when (zerop (length ln))
-                    ;;Final LN is '\0' TODO: properly fix this layer
-                    (write-line 
-                     ";Note: Final [ln] line must be blank as followed" 
-                     out)
-                    (write-line ";String [ln]" out)
-                    (write-line "" out)
+                    (write-line
+                     ";Note: Final [LN] line must be blank as seen above" out)
+                    (setf off noff)
                     (return-from t-2-loop))
-                  ;;write data
-                  (write-line ";String [ln]" out)
-                  (write-line ln out))
-                ;;uint16 version
-                (setf off (rw-uint buf off 2 out 
-                                   ";Version [ver]:[unsigned-int-16]:")))))))))
+                  ;;uint16 ver
+                  (setf off 
+                        (rw-uint buf noff 2 out 
+                                 ";Version [ver]:[unsigned-int-16]:"))))))))))
 
 ;;Audio layer
 ;;Produces: #.ogg - binary format
