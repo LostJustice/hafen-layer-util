@@ -15,7 +15,7 @@ You'll need to find yourself a Common Lisp compiler of your choice (SBCL,CMUCL,C
 
 Usage
 =====
-(documentation 'salem-layer-util:run 'function)
+* Start up sbcl in the directory in the directory you wish to work relative from
 (salem-layer-util:run KEYS)
 Possible KEYS include:
  (:mode              Determines the mode of the program 
