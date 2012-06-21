@@ -76,8 +76,9 @@
       (setf out-file (concatenate 'string
                                   out-fold
                                   out-file
-                                  ".res/"))
-      (format t "IN:~A~%OUT:~A~%" file out-file)
+                                  "/"))
+      (when *verbose* 
+        (format t "IN:~A~%OUT:~A~%" file out-file))
       ;;Considering the user chose this file to be decoded, skipping checking for timestamps
       (load-resource-by-res file out-file))))
 
@@ -119,8 +120,23 @@
 ;;E
 (defun encode-file (files out-fold)
   (values files out-fold)
+  ;;loop through entire list
+  (dolist (file files)
+    ;;resolve output location
+    (let ((out-file file))
+      ;;remove absolute
+      (unless (null (search (directory-namestring file) 
+                            (directory-namestring *default-pathname-defaults*)))
+        (setf out-file (subseq (directory-namestring file)
+                               (length (directory-namestring *default-pathname-defaults*)))))
+      ;;resolve
+      (setf out-file (concatenate 'string
+                                  out-fold
+                                  (subseq out-file 0 (1- (length out-file)))))
+      (when *verbose* 
+        (format t "IN:~A~%OUT:~A~%" file out-file))
+      (load-resource-by-folder file out-file))))
 
-)
 
 ;;EA
 (defun encode-files (files out-fold)

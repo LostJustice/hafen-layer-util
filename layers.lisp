@@ -1220,7 +1220,7 @@ buffer  => An array that shall old all the written bytes before actually being
   ;;#.music
   (with-open-file (in (concatenate 'string
                                    in-file
-                                   ".music")
+                                   ".midi")
                       :direction :input
                       :element-type 'unsigned-byte)
     (let ((seq (make-array (file-length in)
