@@ -1,4 +1,4 @@
-(in-package :slayer-util)
+(in-package :salem-layer-util)
 
 ;;;General
 (defmacro doarr ((var array &optional (result nil)) &body body)
@@ -179,6 +179,12 @@
 
 ;;;;Folder => File util operations
 ;;;Folder input operations
+;;;;0xEF BB BF
+(defun remove-bom (io)
+  "Reads over the BOM in utf-8 files"
+  (when (char= (peek-char nil io nil :eof) (code-char #xFEFF))
+    (read-char io)))
+
 (defun readin-next (io &optional (limit -1))
   "Reads in our next string input from IO-stream and returns it"
   (let ((buf ""))
@@ -281,6 +287,19 @@ unsigned bytes given by the BYTES length"
                    (return-from float->ubarr ubarr))))))
          (format t "###ERROR: ENCODING FLOAT FAILED"))))
 
+(defun str->ubarr (str)
+  "Convert string into \0 terminated unsigned-byte array"
+  ;(declare (optimize (debug 3)))
+  (concatenate 'vector
+               (string-to-octets str :encoding :utf-8)
+               #(0)))
+
+;;;Binary IO output shortcuts
+(defun inte (int bytes buffer)
+  "Shortcut for encoding an INT of BYTES-bytes and pushing it into the BUFFER"
+  ;(declare (optimize (debug 3)))
+  (int->buffer int bytes buffer))
+
 (defun float->buffer (float buffer)
   "Takes a FLOAT and pushes it into the buffer"
   (cond ((zerop float) ;Float 0.0d0
@@ -320,19 +339,6 @@ unsigned bytes given by the BYTES length"
                  (return-from float->buffer nil)))))))
   (format t "###ERROR: ENCODING FLOAT FAILED ~A~%" float))
 
-
-(defun str->ubarr (str)
-  "Convert string into \0 terminated unsigned-byte array"
-  ;(declare (optimize (debug 3)))
-  (concatenate 'vector
-               (string-to-octets str :encoding :utf-8)
-               #(0)))
-
-;;;Binary IO output shortcuts
-(defun inte (int bytes buffer)
-  "Shortcut for encoding an INT of BYTES-bytes and pushing it into the BUFFER"
-  ;(declare (optimize (debug 3)))
-  (int->buffer int bytes buffer))
 
 (defun floate (float buffer)
   "Shortcut for encoding a FLOAT and pushing it into the BUFFER"

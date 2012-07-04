@@ -53,6 +53,7 @@ buffer  => An array that shall old all the written bytes before actually being
                                            in-file
                                            ".data")
                               :direction :input)
+            (remove-bom in)
             ,@body)
           ;;write data
           (when *verbose*
@@ -1186,6 +1187,8 @@ buffer  => An array that shall old all the written bytes before actually being
            (stre en buffer)
            ;;String
            (rstre in buffer))
+         ;;Read in String ['\0']
+         (readin-next in)
          ;;Final en/String are '\0' [0x0000]
          (inte 0 2 buffer))
       ;;Loop: String - ln

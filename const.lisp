@@ -1,4 +1,4 @@
 ;;;Constants used by multiple files
 
-(in-package :slayer-util)
+(in-package :salem-layer-util)
 (defparameter *verbose* t)
