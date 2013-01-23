@@ -2,6 +2,6 @@
 
 (require :bordeaux-threads)
 (require :babel)
-(defpackage :slayer-util
+(defpackage :salem-layer-util
   (:use :common-lisp :babel)
   (:export #:run))
