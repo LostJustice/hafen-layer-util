@@ -2,3 +2,6 @@
 
 (in-package :salem-layer-util)
 (defparameter *verbose* t)
+(defparameter *resource-sig* "Haven Resource 1")
+(defparameter *resource-sig-octets* (string-to-octets +resource-sig+))
+(defparameter *path-to-layers* "layers/")

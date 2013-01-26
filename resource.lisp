@@ -2,10 +2,8 @@
 
 (in-package :salem-layer-util)
 
-(defconstant +resource-sig+ "Haven Resource 1")
-(defconstant +resource-sig-octets+ (string-to-octets +resource-sig+))
-(defconstant +version-size+ 2) ;bytes
-(defconstant +layer-len-size+ 4) ;bytes
+(defparameter *version-size* 2) ;bytes
+(defparameter *layer-len-size* 4) ;bytes
 (defparameter *file-layer-callback*
   ;"Callback functions for the various layers of a resource file"
   `(("vbuf"      . (,#'make-fold-vbuf      . 0 ))
@@ -67,9 +65,9 @@
     (when *verbose*
       (format t " Scanning ~A~%" in-file))
     ;;Check for HNH/Salem file sig, abort if not valid
-    (when (string/= +resource-sig+ (octets-to-string 
+    (when (string/= *resource-sig* (octets-to-string 
                                     (read-times in (length 
-                                                    +resource-sig-octets+))))
+                                                    *resource-sig-octets*))))
       (format t " ~A is not a valid resource file.~%" in-file)
       (return-from load-resource-by-res nil))
     ;;Get resource file version & store in meta file
@@ -78,7 +76,7 @@
                                           "meta")
                              :direction :output
                              :if-exists :supersede)
-      (let ((ver (ubarr->uint (read-times in +version-size+))))
+      (let ((ver (ubarr->uint (read-times in *version-size*))))
         (when *verbose*
           (format t " Version: ~A~%" ver))
         (format io-meta ";Meta file for resource file ~A~%" in-file)
@@ -100,7 +98,7 @@
                 ;;check if layer
                 (when (not (null layer))
                   ;;get size of layer
-                  (let ((len (ubarr->uint (read-times in +layer-len-size+)))
+                  (let ((len (ubarr->uint (read-times in *layer-len-size*)))
                         (layern (concatenate 'string
                                              out-folder
                                              (car layer)
@@ -148,7 +146,7 @@
                           :if-exists :supersede
                           :element-type 'unsigned-byte)
     ;;Write hnh/salem sig
-    (write-sequence +resource-sig-octets+ out-io)
+    (write-sequence *resource-sig-octets* out-io)
     ;;parse meta
     (rmetae folder out-io)
     ;;get all layers
