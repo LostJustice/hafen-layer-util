@@ -3,6 +3,7 @@
 ;;structs
 (defstruct layer
   (name nil :type symbol)
+  (sname "" :type string)
   (id 0 :type number)
   (decode-func nil :type symbol)
   (encode-func nil :type symbol))
@@ -76,7 +77,9 @@
 
 
 (let ((ind 0))
-  (defmacro deflayer (name () (decode-type (&rest dargs) () &body dbody) (encode-type (&rest eargs) () &body ebody))
+  (defmacro deflayer (name () 
+                      (decode-type (&rest dargs) () &body dbody)
+                      (encode-type (&rest eargs) () &body ebody))
     "Generates a layer definition based on the arguments.
 Decoding-type and Encoding-type and args/body refer to the following:
 Note: elements of args are to be symbols for variables
@@ -103,6 +106,7 @@ Types:
     (let* ((dfunc (alexandria:symbolicate name '-decode))
            (efunc (alexandria:symbolicate name '-encode))
            (layer (make-layer :name name
+                              :sname (string-downcase (symbol-name name))
                               :id ind
                               :decode-func dfunc
                               :encode-func efunc))
@@ -117,8 +121,8 @@ Types:
 
 #|Ex layer
 (deflayer test () 
-  (:none (buf io)
+  (:none (buf io) ()
     (+ 1 2)...)
-  (:data-binary (in-file io buffer in)
+  (:data-binary (in-file io buffer in) ()
      ...))
 |#

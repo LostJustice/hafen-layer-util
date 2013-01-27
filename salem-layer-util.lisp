@@ -175,8 +175,8 @@
 
 ;;; salem-layer-util
 
-(defun run (&key (mode :d) (skip-old t) (verbose t) (print-skip nil) (threads 1) (args ()))
-  "salem-layer-util version - 0.5.0
+(defun run (&key (mode :d) (skip-old t) (verbose t) (print-skip nil) (threads 1) (args ()) (layers "layers/salem"))
+  "salem-layer-util version - 1.0.0
 Usage: (salem-layer-util:run KEYS)
 Possible KEYS include:
  (:mode              Determines the mode of the program 
@@ -215,3 +215,84 @@ Possible KEYS include:
                        (car (cdr args))))
     (:ea (encode-files (car (solve-files (car args) threads))
                        (car (cdr args))))))
+
+(defun split-by-space (str)
+  (let ((lst ())
+        (start 0))
+    (do* ((i 0 (1+ i)))
+         ((= (length str) i))
+      (when (char= #\  (char str i))
+        (setf lst (append lst (list (subseq str start i))))
+        (setf start (1+ i))))
+    (setf lst (append lst (list (subseq str start))))
+    lst))
+
+(defun bootstrap ()
+  "salem-layer-util version - 1.0.0
+Usage: (salem-layer-util:run KEYS)
+Possible KEYS include:
+ :mode              Determines the mode of the program 
+                      [DEFAULT-VALUE: :d]
+   Possible modes include:
+    :d              Decodes file(s) given through ARGS by list of pathnames
+                     default output folder: dout
+    :e              Encodes file(s) given through ARGS by list of pathnames
+                     default output folder: dres
+    :da             Decodes a set of files within a specified directory into another
+    :ea             Encodes a set of files within a specified directory into another)
+   Note: for :da and :ea the two directories needed should be provided through &key args
+         first arg within the args list should be source-folder
+         second arg within the args list should be result-folder
+ :skip-old t/nil    Skip processing older files
+                      [DEFAULT-VALUE: t]
+ :verbose t/nil     Be verbose 
+                      [DEFAULT-VALUE: t]
+ :print-skip t/nil  Print skipped files 
+                      [DEFAULT-VALUE: nil]
+ :threads n         Number of threads to execute decoding/encoding of files 
+                      [DEFAULT-VALUE: 1]
+                      As of right now threads key doesn't change anything.
+ :args \"...\"      A list of arguments for the mode given
+ :layers FILE_PATH  File path to the layers needed to be loaded
+                      [DEFAULT-VALUE: layers/salem]
+                    Within this folder should be your layer definitions and a file named
+                    `config.lisp\' with the information needed for the layers"
+  (let ((mode :d)
+        (skip-old t)
+        (verbose t)
+        (print-skip nil)
+        (threads 1)
+        (args ())
+        (layers "layers/salem"))
+    (if (= 1 (length sb-ext:*posix-argv*))
+        (princ (documentation 'bootstrap 'function))
+        (do* ((argv (cdr sb-ext:*posix-argv*) (cdr argv))
+              (arg (car argv) (car argv)))
+             ((null argv) (progn
+                            (when verbose 
+                              (format t "~A|~A|~A|~A|~A|~A~%" mode skip-old verbose print-skip threads args))
+                            (run :mode mode :skip-old skip-old :verbose verbose :print-skip print-skip
+                                 :threads threads :args args :layers layers)))
+          (cond
+            ((string= arg ":mode")
+             (setf argv (cdr argv))
+             (setf mode (intern (string-upcase (car argv)))))
+            ((string= arg ":skip-old")
+             (setf argv (cdr argv))
+             (setf skip-old (read-from-string (car argv))))
+            ((string= arg ":verbose")
+             (setf argv (cdr argv))
+             (setf verbose (read-from-string (car argv))))
+            ((string= arg ":print-skip")
+             (setf argv (cdr argv))
+             (setf print-skip (read-from-string (car argv))))
+            ((string= arg ":threads")
+             (setf argv (cdr argv))
+             (setf threads (read-from-string (car argv))))
+            ((string= arg ":args")
+             (setf argv (cdr argv))
+             (setf args (split-by-space (car argv))))
+            ((string= args ":layers")
+             (setf argv (cdr argv))
+             (setf layers (car argv)))))))
+  (sb-ext:exit :code 0))
