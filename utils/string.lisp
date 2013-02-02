@@ -9,10 +9,11 @@
          ((zerop ch))
       (setf lst (append lst (cons ch nil)))
       (incf off))
-    (values (babel:octets-to-string (make-array (length lst)
-                                                :element-type '(unsigned-byte 8)
-                                                :initial-contents lst)
-                                    :encoding :utf-8)
+    (values (babel:octets-to-string 
+             (make-array (length lst)
+                         :element-type '(unsigned-byte 8)
+                         :initial-contents lst)
+             :encoding :utf-8)
             (1+ off))))
 
 (defun rw-str (buf off io fmt)
