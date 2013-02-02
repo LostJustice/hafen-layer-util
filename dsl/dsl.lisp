@@ -1,4 +1,4 @@
-(in-package :salem-layer-util-dsl)
+(in-package :salem-layer-util)
 
 (defun handle-lisp (args dhold arg)
   (if (consp arg)

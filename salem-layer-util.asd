@@ -6,7 +6,6 @@
     :description "A resource utility for Salem"
     :depends-on (:babel :alexandria)
     :components ((:file "packages")
-                 (:file "dsl/packages" :depends-on ("packages"))
                  ;;globals
                  (:file "const"
                         :depends-on ("packages"))

@@ -1,4 +1,4 @@
-(in-package :salem-layer-util-dsl)
+(in-package :salem-layer-util)
 
 (defun uint-16-decode (buf off io dhold)
   "Transforms an uint-16 decode into proper CL code"

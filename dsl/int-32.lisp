@@ -1,4 +1,4 @@
-(in-package :salem-layer-util-dsl)
+(in-package :salem-layer-util)
 
 (defun int-32-decode (buf off io dhold)
   "Transforms an int-32 decode into proper CL code"

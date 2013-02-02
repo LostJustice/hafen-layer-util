@@ -1,4 +1,4 @@
-(in-package :salem-layer-util-dsl)
+(in-package :salem-layer-util)
 
 (defun int-8-decode (buf off io dhold)
   "Transforms an int-8 decode into proper CL code"
