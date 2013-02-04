@@ -44,7 +44,12 @@
 (defun uint-16-encode (buffer io dhold)
   "Transforms an uint-16 encode into proper CL code"
   (if (dhold-lflag dhold)
-      (error "Use of LET in encode mode does not work on functions")
+      (progn
+        (setf (car (dhold-data dhold))
+              (append (car (dhold-data dhold))
+                      `( ((,(dhold-lflag dhold) (readin-int ,io)))
+                         (inte ,(dhold-lflag dhold) 2 ,buffer) ))) 
+        (setf (dhold-lflag dhold) nil))
       (setf (car (dhold-data dhold))
             (append (car (dhold-data dhold))
                     `((rinte ,io 2 ,buffer))))))

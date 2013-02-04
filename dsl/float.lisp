@@ -45,7 +45,12 @@
 (defun float-encode (buffer io dhold)
   "Transforms an float encode into proper CL code"
   (if (dhold-lflag dhold)
-      (error "Use of LET in encode mode does not work on functions")
+      (progn
+        (setf (car (dhold-data dhold))
+              (append (car (dhold-data dhold))
+                      `( ((,(dhold-lflag dhold) (readin-float ,io)))
+                         (floate ,(dhold-lflag dhold) ,buffer) ))) 
+        (setf (dhold-lflag dhold) nil))
       (setf (car (dhold-data dhold))
             (append (car (dhold-data dhold))
                     `((rfloate ,io ,buffer))))))

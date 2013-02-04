@@ -42,7 +42,12 @@
 (defun string-encode (buffer io dhold)
   "Transforms an string encode into proper CL code"
   (if (dhold-lflag dhold)
-      (error "Use of LET in encode mode does not work on functions")
+      (progn
+        (setf (car (dhold-data dhold))
+              (append (car (dhold-data dhold))
+                      `( ((,(dhold-lflag dhold) (readin-next ,io)))
+                         (stre ,(dhold-lflag dhold) ,buffer) ))) 
+        (setf (dhold-lflag dhold) nil))
       (setf (car (dhold-data dhold))
             (append (car (dhold-data dhold))
                     `((rstre ,io ,buffer))))))

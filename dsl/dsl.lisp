@@ -26,32 +26,32 @@
   (if (eq (car args) :encode)
       (case arg
         ;;;Variables
-        (let (let-encode (second args) (third args) dhold))
+        (:let (let-encode (second args) (third args) dhold))
         
         ;;;Functions
         ;;ints
-        (int-64 
+        (:int64 
          (int-64-encode (second args) (third args) dhold))
-        (int-32 
+        (:int32 
          (int-32-encode (second args) (third args) dhold))
-        (int-16 
+        (:int16 
          (int-16-encode (second args) (third args) dhold))
-        (int-8  
+        (:int8  
          (int-8-encode (second args) (third args) dhold))
         ;;uints
-        (uint-64 
+        (:uint64 
          (uint-64-encode (second args) (third args) dhold))
-        (uint-32 
+        (:uint32 
          (uint-32-encode (second args) (third args) dhold))
-        (uint-16 
+        (:uint16 
          (uint-16-encode (second args) (third args) dhold))
-        (uint-8  
+        (:uint8  
          (uint-8-encode (second args) (third args) dhold))
         ;;float
-        (float   
+        (:float   
          (float-encode (second args) (third args) dhold))
         ;;string
-        (string  
+        (:string  
          (string-encode (second args) (third args) dhold))
     
         ;;intermixed Lisp code
@@ -59,32 +59,32 @@
         )
       (case arg
         ;;;Variables
-        (let (let-decode (second args) (third args) (fourth args) dhold))
+        (:let (let-decode (second args) (third args) (fourth args) dhold))
         
         ;;;Functions
         ;;ints
-        (int-64 
+        (:int64 
          (int-64-decode (second args) (third args) (fourth args) dhold))
-        (int-32 
+        (:int32 
          (int-32-decode (second args) (third args) (fourth args) dhold))
-        (int-16 
+        (:int16 
          (int-16-decode (second args) (third args) (fourth args) dhold))
-        (int-8  
+        (:int8  
          (int-8-decode (second args) (third args) (fourth args) dhold))
         ;;uints
-        (uint-64 
+        (:uint64 
          (uint-64-decode (second args) (third args) (fourth args) dhold))
-        (uint-32 
+        (:uint32 
          (uint-32-decode (second args) (third args) (fourth args) dhold))
-        (uint-16 
+        (:uint16 
          (uint-16-decode (second args) (third args) (fourth args) dhold))
-        (uint-8  
+        (:uint8  
          (uint-8-decode (second args) (third args) (fourth args) dhold))
         ;;float
-        (float   
+        (:float   
          (float-decode (second args) (third args) (fourth args) dhold))
         ;;string
-        (string  
+        (:string  
          (string-decode (second args) (third args) (fourth args) dhold))
     
         ;;intermixed Lisp code

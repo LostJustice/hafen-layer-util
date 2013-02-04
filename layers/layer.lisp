@@ -36,7 +36,8 @@
                                                        ".data")
                             :direction :output
                             :if-exists :supersede)
-            ,@body))))
+            (decoder (,(first args) ,(second args) ,(fourth args))
+              ,@body)))))
     
     ;;ENCODING
     (:defnone-binary
@@ -66,7 +67,8 @@
                                                        ".data")
                             :direction :input)
             (remove-bom ,(fourth args))
-            ,@body)
+            (encoder (,(third args) ,(fourth args))
+              ,@body))
           ;;write data
           (when *verbose*
             (format t "   Len  : ~A~%" (length ,(third args))))
@@ -77,6 +79,10 @@
 
 
 (let ((ind 0))
+  (defun reset-layers ()
+    (setf ind 0)
+    (setf *layers-table* (make-hash-table)))
+
   (defmacro deflayer (name () 
                       (decode-type (&rest dargs) () &body dbody)
                       (encode-type (&rest eargs) () &body ebody))
