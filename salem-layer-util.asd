@@ -48,8 +48,10 @@
                                                     "utils/int"
                                                     "utils/string"
                                                     "utils/float"))
+                 (:file "layers/unknown" :depends-on ("utils/io"))
+                 
                  ;;logic
                  (:file "resource" 
-                        :depends-on ("layers/layer"))
+                        :depends-on ("layers/layer" "layers/unknown"))
                  (:file "salem-layer-util" 
                         :depends-on ("resource"))))

@@ -15,7 +15,7 @@
     (write-line ";Neg Layer data file" out)
     :int16 ("cc(x)" "cc(y)" "bc(x)" "bc(y)" "bs(x)" "bs(y)" "sz(x)" "sz(y)")
     :let en = :int8 "en"
-    (loop for i from 0 to (-1 en)
+    (loop for i from 0 to (1- en)
        do (progn
             :let epid = :int8 "epid"
             :let cn = :uint16 "cn"
@@ -24,11 +24,11 @@
   (:defdata-binary (in-file io buffer in) ()
     ;;cc,bc,bs,sz
     (ntimes 8 :int16)
-    let en = :int8
+    :let en = :int8
     (ntimes en
       ;;epid
       :int8
-      let cn = :uint16
+      :let cn = :uint16
       (ntimes cn
         ;;ep(epid)(o)
         (ntimes 2 :int16)))))

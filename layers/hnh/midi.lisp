@@ -6,4 +6,4 @@
     (write-line ";Midi Layer data file")
     (copy-raw-to-file buf (concatenate 'string io ".midi")))
   (:defnone-binary (in-file io buffer) ()
-    (push-file-to-buffer (buffer (concatenate 'string in-file ".midi")))))
+    (push-file-to-buffer buffer (concatenate 'string in-file ".midi"))))

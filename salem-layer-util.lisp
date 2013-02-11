@@ -68,8 +68,8 @@
   (dolist (file files)
     (let ((out-file file))
       ;;check if user gave absolute pathnames
-      (unless (null (search (directory-namestring file) 
-                            (directory-namestring *default-pathname-defaults*)))
+      (when (/= 0 (search (directory-namestring file) 
+                         (directory-namestring *default-pathname-defaults*)))
         (setf out-file (subseq (directory-namestring file)
                                (length (directory-namestring *default-pathname-defaults*)))))
       ;;resolve
@@ -173,6 +173,20 @@
       
             
 
+(defun load-layers (layer-dir)
+  (let ((config (concatenate 'string layer-dir "/common.lisp"))
+        (layers (directory (make-pathname :directory `(:relative ,layer-dir)
+                                          :name :wild :type "lisp"))))
+    ;;load config
+    (when (probe-file config)
+      (load config))
+    ;;load layers
+    (loop 
+       for layer in layers
+       do (when (string/= config (subseq (namestring layer) 
+                                         (length (namestring *default-pathname-defaults*))))
+            (load layer)))))
+            
 ;;; salem-layer-util
 
 (defun run (&key (mode :d) (skip-old t) (verbose t) (print-skip nil) (threads 1) (args ()) (layers "layers/salem"))
@@ -201,6 +215,7 @@ Possible KEYS include:
                       [DEFAULT-VALUE: 1]
                       As of right now threads key doesn't change anything.
  (:args '(...))      A list of arguments for the mode given"
+  (in-package :salem-layer-util)
   (when (zerop (length args))
     (princ (documentation 'run 'function))
     (return-from run nil))
@@ -208,6 +223,9 @@ Possible KEYS include:
   (setf *skip-old* skip-old)
   (setf *verbose* verbose)
   (setf *print-skip* print-skip)
+  ;;reset layer table and load layers
+  (reset-layers) 
+  (load-layers layers)
   (case mode
     (:d  (decode-file args "dout/"))
     (:e  (encode-file args "dres/"))
@@ -234,12 +252,12 @@ Possible KEYS include:
  :mode              Determines the mode of the program 
                       [DEFAULT-VALUE: :d]
    Possible modes include:
-    :d              Decodes file(s) given through ARGS by list of pathnames
+    d              Decodes file(s) given through ARGS by list of pathnames
                      default output folder: dout
-    :e              Encodes file(s) given through ARGS by list of pathnames
+    e              Encodes file(s) given through ARGS by list of pathnames
                      default output folder: dres
-    :da             Decodes a set of files within a specified directory into another
-    :ea             Encodes a set of files within a specified directory into another)
+    da             Decodes a set of files within a specified directory into another
+    ea             Encodes a set of files within a specified directory into another)
    Note: for :da and :ea the two directories needed should be provided through &key args
          first arg within the args list should be source-folder
          second arg within the args list should be result-folder
@@ -269,14 +287,12 @@ Possible KEYS include:
         (do* ((argv (cdr sb-ext:*posix-argv*) (cdr argv))
               (arg (car argv) (car argv)))
              ((null argv) (progn
-                            (when verbose 
-                              (format t "~A|~A|~A|~A|~A|~A~%" mode skip-old verbose print-skip threads args))
                             (run :mode mode :skip-old skip-old :verbose verbose :print-skip print-skip
                                  :threads threads :args args :layers layers)))
           (cond
             ((string= arg ":mode")
              (setf argv (cdr argv))
-             (setf mode (intern (string-upcase (car argv)))))
+             (setf mode (intern (string-upcase (car argv)) :keyword)))
             ((string= arg ":skip-old")
              (setf argv (cdr argv))
              (setf skip-old (read-from-string (car argv))))
@@ -292,7 +308,7 @@ Possible KEYS include:
             ((string= arg ":args")
              (setf argv (cdr argv))
              (setf args (split-by-space (car argv))))
-            ((string= args ":layers")
+            ((string= arg ":layers")
              (setf argv (cdr argv))
              (setf layers (car argv)))))))
   (sb-ext:exit :code 0))

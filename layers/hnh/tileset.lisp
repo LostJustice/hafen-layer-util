@@ -18,7 +18,7 @@
             :string ((format nil "fln(~A)" i))
             :uint16 ((format nil "flv(~A)" i))
             :uint8  ((format nil "flw(~A)" i)))))
- (:defdata-binary (in-file io buffer) ()
+ (:defdata-binary (in-file io buffer in) ()
    :uint8 ;fl
    :let flnum = :uint16
    :uint16 ;flavprob

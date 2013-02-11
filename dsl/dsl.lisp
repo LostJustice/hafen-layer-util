@@ -1,5 +1,12 @@
 (in-package :salem-layer-util)
 
+(defmacro test (&body c)
+  `,(test2 c))
+
+(defun test2 (&res c)
+  (format t "~A~%" c)
+  `(progn (car ,c) ,@c))
+
 (defun handle-lisp (args dhold arg)
   (if (consp arg)
       ;;complex 

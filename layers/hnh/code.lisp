@@ -9,4 +9,4 @@
     (copy-raw-to-file buf (concatenate 'string io ".class") :start off))
   (:defdata-binary (in-file io buffer in) ()
     :string
-    (push-file-to-buffer (buffer (concatenate 'string in-file ".class")))))
+    (push-file-to-buffer buffer (concatenate 'string in-file ".class"))))

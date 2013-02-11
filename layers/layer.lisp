@@ -36,9 +36,8 @@
                                                        ".data")
                             :direction :output
                             :if-exists :supersede)
-            (decoder (,(first args) ,(second args) ,(fourth args))
+            (decoder (,(first args) ,(third args) ,(fourth args))
               ,@body)))))
-    
     ;;ENCODING
     (:defnone-binary
      `(defun ,fnsym (,(first args) ,(second args))
@@ -99,7 +98,7 @@ Types:
 - Arguments expected:
 1/2 All of the ones from :none
 3. offset counter [off]
-4. .data file handler [out]
+4. .data file write-only steam handler [out]
 :defnone-binary -> the basic encoding type function
 - Arguments expected:
 1. Incoming file name [in-file]
@@ -108,7 +107,7 @@ Types:
 :defdata-binary -> :none-binary + automatically opens up .data file for reading
 - Arguments expected:
 1-3 Same as :none-binary
-4. data file handler [in]"
+4. data file read-only steam [in]"
     (let* ((dfunc (alexandria:symbolicate name '-decode))
            (efunc (alexandria:symbolicate name '-encode))
            (layer (make-layer :name name

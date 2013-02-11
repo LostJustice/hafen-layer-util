@@ -39,7 +39,8 @@
     ;;Scan for layers
     (let ((sbuf "")
           (lc (make-array (hash-table-count *layers-table*)
-                          :initial-element 0)))
+                          :initial-element 0))
+          (unk 0))
       (do ((i (read-byte in nil -1)
               (read-byte in nil -1)))
           ((minusp i))
@@ -48,25 +49,33 @@
             (progn
               (when *verbose*
                 (format t " String: ~A~%" sbuf))
-              (let ((layer (gethash (intern (nstring-upcase sbuf)) *layers-table*)))
+              (let ((layer (gethash (intern (nstring-upcase sbuf)) *layers-table*))
+                    (len (ubarr->uint (read-times in *layer-len-size*))))
                 ;;check if layer
-                (when (not (null layer))
-                  ;;get size of layer
-                  (let ((len (ubarr->uint (read-times in *layer-len-size*)))
-                        (layern (concatenate 'string
-                                             out-folder
-                                             (car layer)
-                                             "/"
-                                             (write-to-string (aref lc (layer-id layer))))))
-                    ;;make layer directory if needed
-                    (ensure-directories-exist layern)
-                    ;;make layer
-                    (when *verbose*
-                      (format t "  Scanning layer...~%"))
-                    (funcall `(function ,(layer-decode-func layer)) (read-times in len) layern)))
-                    ;;inc layer count
-                    (incf (aref lc (layer-id layer))))
-              (setf sbuf ""))
+                (if (layer-p layer)
+                    ;;decode known layer
+                    (let ((layern (concatenate 'string
+                                               out-folder
+                                               (layer-sname layer)
+                                               "/"
+                                               (write-to-string (aref lc (layer-id layer))))))
+                      ;;make layer directory if needed
+                      (ensure-directories-exist layern)
+                      ;;make layer
+                      (when *verbose*
+                        (format t "  Scanning layer...~%"))
+                      (funcall (symbol-function (layer-decode-func layer)) (read-times in len) layern)
+                      ;;inc layer count
+                      (incf (aref lc (layer-id layer))))
+                    ;;decode unknown layer
+                    (let ((layern (concatenate 'string out-folder "/" (write-to-string unk))))
+                      (incf unk)
+                      ;;make directories if needed
+                      (ensure-directories-exist layern)
+                      (when *verbose*
+                        (format t "  Scanning unknown layer...~%"))
+                      (unknown-layer-decode (read-times in len) layern)))
+                (setf sbuf "")))
             ;;continue building string
             (setf sbuf (concatenate 'string
                                    sbuf
@@ -122,7 +131,7 @@
               ;;encode layer name
               (write-sequence (str->ubarr (layer-sname layer-cb)) out-io)
               ;;encode its data
-              (funcall `(function ,(layer-encode-func layer-cb))
+              (funcall (symbol-function (layer-encode-func layer-cb))
                        (concatenate 'string
                                     (namestring layer)
                                     "/"
