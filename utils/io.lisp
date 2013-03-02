@@ -30,6 +30,17 @@
     arr))
 
 ;;;Bianry IO write operations
+(defun newline (stream)
+  "because terpri doesn't work in binary mode"
+  (write-byte 10 stream))
+
+(defun write-str (str stream)
+  "Writes a string to a binary stream"
+  (write-sequence
+   (babel:string-to-octets str :encoding :utf-8)
+   stream)
+  (newline stream))
+
 (defun write-all (buffer io)
   "Writes the entire contents of BUFFER to IO"
   (write-sequence buffer io)

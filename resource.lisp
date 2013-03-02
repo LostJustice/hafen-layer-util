@@ -49,7 +49,8 @@
             (progn
               (when *verbose*
                 (format t " String: ~A~%" sbuf))
-              (let ((layer (gethash (intern (nstring-upcase sbuf)) *layers-table*))
+              (let ((layer (gethash (intern (nstring-upcase sbuf)) 
+                                    *layers-table*))
                     (len (ubarr->uint (read-times in *layer-len-size*))))
                 ;;check if layer
                 (if (layer-p layer)
@@ -58,23 +59,28 @@
                                                out-folder
                                                (layer-sname layer)
                                                "/"
-                                               (write-to-string (aref lc (layer-id layer))))))
+                                               (write-to-string 
+                                                (aref lc 
+                                                      (layer-id layer))))))
                       ;;make layer directory if needed
                       (ensure-directories-exist layern)
                       ;;make layer
                       (when *verbose*
                         (format t "  Scanning layer...~%"))
-                      (funcall (symbol-function (layer-decode-func layer)) (read-times in len) layern)
+                      (funcall (symbol-function (layer-decode-func layer)) 
+                               (read-times in len) layern)
                       ;;inc layer count
                       (incf (aref lc (layer-id layer))))
                     ;;decode unknown layer
-                    (let ((layern (concatenate 'string out-folder "/" (write-to-string unk))))
+                    (let ((layern (concatenate 'string out-folder "/" 
+                                               (write-to-string unk))))
                       (incf unk)
                       ;;make directories if needed
                       (ensure-directories-exist layern)
                       (when *verbose*
                         (format t "  Scanning unknown layer...~%"))
-                      (unknown-layer-decode (read-times in len) layern)))
+                      (unknown-layer-decode (read-times in len) layern
+                                            sbuf)))
                 (setf sbuf "")))
             ;;continue building string
             (setf sbuf (concatenate 'string
@@ -108,18 +114,23 @@
   (with-open-file (out-io outfile :direction :output
                           :if-exists :supersede
                           :element-type 'unsigned-byte)
+    (when *verbose*
+      (format t "Encoding ~A~%" folder))
     ;;Write hnh/salem sig
     (write-sequence *resource-sig-octets* out-io)
     ;;parse meta
     (rmetae folder out-io)
     ;;get all layers
-    (let ((layers (directory (make-pathname :directory (pathname-directory folder)
+    (let ((layers (directory (make-pathname :directory (pathname-directory 
+                                                        folder)
                                             :name :wild
                                             :type :wild))))
       ;;encode them all
       (dolist (layer layers)
         ;;layers are directories
-        (let ((layer-cb (gethash (intern (nstring-upcase (car (last (pathname-directory layer)))))
+        (let ((layer-cb (gethash (intern (nstring-upcase 
+                                          (car (last 
+                                                (pathname-directory layer)))))
                                  *layers-table*)))
           (when (and (null (pathname-type layer))
                      (null (pathname-name layer))
@@ -127,7 +138,8 @@
             ;;encode data 
             (dotimes (i (1+ (solve-high layer)))
               (when *verbose*
-                (format t "  Encoding Layer[~A#~A]...~%" (layer-name layer-cb) i))
+                (format t "  Encoding Layer[~A#~A]...~%" (layer-name layer-cb) 
+                        i))
               ;;encode layer name
               (write-sequence (str->ubarr (layer-sname layer-cb)) out-io)
               ;;encode its data

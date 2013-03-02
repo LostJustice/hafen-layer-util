@@ -35,7 +35,11 @@
                                                        io
                                                        ".data")
                             :direction :output
+                            :element-type '(unsigned-byte 8)
                             :if-exists :supersede)
+            (write-str ,(format nil ";~A Layer data file"
+                                (symbol-name name))
+                       ,(fourth args))
             (decoder (,(first args) ,(third args) ,(fourth args))
               ,@body)))))
     ;;ENCODING

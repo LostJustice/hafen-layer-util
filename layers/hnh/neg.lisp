@@ -12,7 +12,6 @@
   ;;  for o from 0 to cn-1
   ;;    Coord - ep(epid)(o)
   (:defdata (buf io off out) ()
-    (write-line ";Neg Layer data file" out)
     :int16 ("cc(x)" "cc(y)" "bc(x)" "bc(y)" "bs(x)" "bs(y)" "sz(x)" "sz(y)")
     :let en = :int8 "en"
     (loop for i from 0 to (1- en)

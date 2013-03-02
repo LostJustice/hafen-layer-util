@@ -9,7 +9,6 @@
   ;;  uint16 - flv(i)
   ;;  uint8  - flw(i)
  (:defdata (buf io off out) ()
-    (write-line ";Tileset Layer data file" out)
     :uint8 "fl"
     :let flnum = :uint16 "flnum"
     :uint16 "flavprob"

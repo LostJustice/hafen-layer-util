@@ -1,10 +1,24 @@
 (in-package :salem-layer-util)
 
-(defun unknown-layer-decode (buf io-name)
+(defun unknown-layer-decode (buf io-name layern)
   (when *verbose*
     (format t "   Layer: ~A~%" io-name)
     (format t "   Len  : ~A~%" (length buf)))
-  (copy-raw-to-file buf (concatenate 'string io-name ".unknown")))
+  (let ((nbuf (make-array (+ (length buf) (length layern) 5)
+                          :initial-element 0
+                          :element-type '(unsigned-byte 8)))
+        (off 0))
+    (doarr (char (babel:string-to-octets layern :encoding :utf-8))
+      (setf (aref nbuf off) char)
+      (incf off))
+    (incf off)
+    (doarr (int (int->ubarr (length buf) 4))
+      (setf (aref nbuf off) int)
+      (incf off))
+    (doarr (by buf)
+      (setf (aref nbuf off) by)
+      (incf off))
+    (copy-raw-to-file nbuf (concatenate 'string io-name ".unknown"))))
 
 (defun unknown-layer-encode (in-file io)
   (let ((buffer (make-array 1

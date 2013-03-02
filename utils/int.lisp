@@ -24,8 +24,8 @@
   "Read in an unsigned integer and writes it to char-IO"
   (multiple-value-bind (val noff)
       (read-uint buf off bytes)
-    (write-line fmt io)
-    (write-line (write-to-string val) io)
+    (write-str fmt io)
+    (write-str (write-to-string val) io)
     (values noff
             val)))
 
@@ -42,8 +42,8 @@
   "Read in an signed integer and writes it to char-IO"
   (multiple-value-bind (val noff)
       (read-sint buf off bytes)
-    (write-line fmt io)
-    (write-line (write-to-string val) io)
+    (write-str fmt io)
+    (write-str (write-to-string val) io)
     (values noff
             val)))
 

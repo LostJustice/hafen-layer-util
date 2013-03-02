@@ -7,7 +7,6 @@
   ;;uint16 - w
   ;;.png byte array
   (:defdata (buf io off out) ()
-    (write-line ";Tile Layer data file" out)
     :uint8 "t"
     :uint8 "id"
     :uint16 "w"

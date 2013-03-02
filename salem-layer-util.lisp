@@ -22,7 +22,8 @@
            (push f lst))
           ((null (pathname-name f))    ; directory
            (setf lst 
-                 (append (solve-files-1 (make-pathname :directory (pathname-directory f)
+                 (append (solve-files-1 (make-pathname :directory 
+                                                       (pathname-directory f)
                                                        :name :wild
                                                        :type :wild))
                          lst))))))
@@ -38,7 +39,8 @@
          (split-size (round (/ (length files) splits)))
          (file-lists ()))
     (dotimes (i (1- splits))
-      (push (subseq files (* i split-size) (+ (* i split-size) split-size)) file-lists))
+      (push (subseq files (* i split-size) (+ (* i split-size) split-size)) 
+            file-lists))
     (push (subseq files (* (1- splits) split-size)) file-lists)
     file-lists))
     
@@ -55,7 +57,8 @@
   (let ((date (get-date-1 file)))
     (when (and (/= date 0)
                (null (pathname-name file)))
-      (let ((files (directory (make-pathname :directory (pathname-directory file)
+      (let ((files (directory (make-pathname :directory 
+                                             (pathname-directory file)
                                              :name :wild
                                              :type :wild))))
         (dolist (f files)
@@ -71,7 +74,8 @@
       (when (/= 0 (search (directory-namestring file) 
                          (directory-namestring *default-pathname-defaults*)))
         (setf out-file (subseq (directory-namestring file)
-                               (length (directory-namestring *default-pathname-defaults*)))))
+                               (length (directory-namestring
+                                        *default-pathname-defaults*)))))
       ;;resolve
       (setf out-file (concatenate 'string
                                   out-fold
@@ -79,11 +83,12 @@
                                   "/"))
       (when *verbose* 
         (format t "IN:~A~%OUT:~A~%" file out-file))
-      ;;Considering the user chose this file to be decoded, skipping checking for timestamps
+      ;;Considering the user chose this file to be decoded, skipping 
+      ;;checking for timestamps
       (load-resource-by-res file out-file))))
 
 ;;DA
-(defun decode-files (files out-fold)
+(defun decode-files (files out-fold in-fold)
   "Decodes the list of FILES into OUTF"
   (let ((len (length files))
         (i 0))
@@ -96,19 +101,22 @@
         (format t "File: ~A/~A~%" i len))
       ;;resolve output location
       (let ((outf  (subseq (directory-namestring file)
-                           (length (directory-namestring *default-pathname-defaults*))))
+                           (length (directory-namestring 
+                                    *default-pathname-defaults*))))
             (out-file ""))
-        (if (null (search "/" outf))
+        (if (search in-fold outf :test #'equalp)
             (setf out-file (concatenate 'string
                                         out-fold
                                         "/"
-                                        outf
+                                        (subseq outf (length in-fold))
                                         "/"
                                         (pathname-name file)
                                         ".res/"))
             (setf out-file (concatenate 'string
                                         out-fold
-                                        (subseq outf (search "/" outf))
+                                        "/"
+                                        outf
+                                        "/"
                                         (pathname-name file)
                                         ".res/")))
         ;;check timestamps
@@ -126,9 +134,11 @@
     (let ((out-file file))
       ;;remove absolute
       (unless (null (search (directory-namestring file) 
-                            (directory-namestring *default-pathname-defaults*)))
+                            (directory-namestring 
+                             *default-pathname-defaults*)))
         (setf out-file (subseq (directory-namestring file)
-                               (length (directory-namestring *default-pathname-defaults*)))))
+                               (length (directory-namestring
+                                        *default-pathname-defaults*)))))
       ;;resolve
       (setf out-file (concatenate 'string
                                   out-fold
@@ -139,7 +149,7 @@
 
 
 ;;EA
-(defun encode-files (files out-fold)
+(defun encode-files (files in-fold out-fold)
   "Encodes the list of FILES into OUTF"
   (let ((len (length files))
         (i 0))
@@ -153,16 +163,21 @@
        
       ;;resolve output location
       (let ((outf (subseq (directory-namestring file)
-                          (length (directory-namestring *default-pathname-defaults*))))
+                          (length (directory-namestring 
+                                   *default-pathname-defaults*))))
             (out-file ""))
-        (if (null (search "/" outf))
-            (setf out-file (concatenate 'string
-                                        out-fold
-                                        "/"
-                                        outf))
-            (setf out-file (concatenate 'string
-                                        out-fold
-                                        (subseq outf (search "/" outf)))))
+        (if (search in-fold outf)
+            (setf out-file 
+                  (concatenate 'string
+                               out-fold
+                               "/"
+                               (subseq outf
+                                       (length in-fold))))
+            (setf out-file
+                  (concatenate 'string
+                               out-fold
+                               "/"
+                               outf)))
         (setf out-file (subseq out-file 0 (1- (length out-file))))
         ;;check timestamps
         (if (or (not *skip-old*)
@@ -183,8 +198,10 @@
     ;;load layers
     (loop 
        for layer in layers
-       do (when (string/= config (subseq (namestring layer) 
-                                         (length (namestring *default-pathname-defaults*))))
+       do (when (string/= config 
+                          (subseq (namestring layer) 
+                                  (length (namestring
+                                           *default-pathname-defaults*))))
             (load layer)))))
             
 ;;; salem-layer-util
@@ -230,8 +247,10 @@ Possible KEYS include:
     (:d  (decode-file args "dout/"))
     (:e  (encode-file args "dres/"))
     (:da (decode-files (car (solve-files (car args) threads)) 
-                       (car (cdr args))))
+                       (car (cdr args))
+                       (car args)))
     (:ea (encode-files (car (solve-files (car args) threads))
+                       (car args)
                        (car (cdr args))))))
 
 (defun split-by-space (str)
@@ -287,7 +306,8 @@ Possible KEYS include:
         (do* ((argv (cdr sb-ext:*posix-argv*) (cdr argv))
               (arg (car argv) (car argv)))
              ((null argv) (progn
-                            (run :mode mode :skip-old skip-old :verbose verbose :print-skip print-skip
+                            (run :mode mode :skip-old skip-old 
+                                 :verbose verbose :print-skip print-skip
                                  :threads threads :args args :layers layers)))
           (cond
             ((string= arg ":mode")

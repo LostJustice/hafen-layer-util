@@ -10,7 +10,6 @@
   ;;for i from 0 to ad-1
   ;;  string - ad(i)
   (:defdata (buf io off out) ()
-    (write-line ";Action Layer data file" out)
     :string "pr"
     :uint16 "pver"
     :string "name"

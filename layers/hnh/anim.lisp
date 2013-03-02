@@ -7,7 +7,6 @@
   ;;for i from 0 to ids-1
   ;;  uint16 - ids(i)
  (:defdata (buf io off out) ()
-   (write-line ";Anim Layer data file" out)
    :int16 "id"
    :uint16 "d"
    :let ids = :uint16 "ids"

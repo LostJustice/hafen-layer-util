@@ -9,7 +9,6 @@
   ;;int-16 - o (coord=>(int,int))
   ;;.png byte array
   (:defdata (buf io off out) ()
-    (write-line ";Image Layer data file" out)
     :int16 "z"
     :int16 "subz"
     :int8 "nooff"

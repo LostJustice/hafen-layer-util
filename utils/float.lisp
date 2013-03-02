@@ -32,8 +32,8 @@
     (when (= f33 -111)
       (print fmt)
       (print off) (terpri))
-    (write-line fmt io)
-    (write-line (write-to-string f33) io)
+    (write-str fmt io)
+    (write-str (write-to-string f33) io)
     (values noff
             f33)))
 
