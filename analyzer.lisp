@@ -15,7 +15,7 @@
                 ;(return-from scan-twins i))))
                 )))
           ;;failed length test
-          (return-from scan-twins :length))))
+          (return-from scan-twins `(:length ,(file-length fd1) ,(file-length fd2))))))
   nil)
 
 (defun find-twin (file files-2 fold1 fold2 def)

@@ -9,4 +9,4 @@
   ;;Midi Layer [ENCODE]
   ;;Contains: #.midi, binary file
   (:defnone-binary (in-file io buffer) ()
-    (push-file-to-buffer (buffer (concatenate 'string in-file ".midi")))))
+    (push-file-to-buffer buffer (concatenate 'string in-file ".midi"))))

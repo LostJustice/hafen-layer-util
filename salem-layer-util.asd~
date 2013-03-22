@@ -27,7 +27,6 @@
                  (:file "dsl/uint-64" :depends-on ("dsl/common"))
                  (:file "dsl/float" :depends-on ("dsl/common"))
                  (:file "dsl/string" :depends-on ("dsl/common"))
-                 (:file "dsl/cstring" :depends-on ("dsl/common"))
                  (:file "dsl/let" :depends-on ("dsl/common"))
                  (:file "dsl/dsl" :depends-on ("utils/float"
                                                "utils/int"

@@ -1,16 +1,10 @@
 (in-package :salem-layer-util)
 
-(defmacro test (&body c)
-  `,(test2 c))
-
-(defun test2 (&res c)
-  (format t "~A~%" c)
-  `(progn (car ,c) ,@c))
-
 (defun handle-lisp (args dhold arg)
   (if (consp arg)
       ;;complex 
-      (let ((oargv (dhold-argv dhold)))
+      (let ((oargv (dhold-argv dhold))
+            (data-count (length (dhold-data dhold))))
         ;;set temp argv
         (setf (dhold-argv dhold) arg)
         ;;push new scope onto data for use
@@ -20,11 +14,13 @@
           (setf (dhold-argv dhold) (cdr (dhold-argv dhold))))
         ;;reset to older argv
         (setf (dhold-argv dhold) oargv)
-        ;;reduce data back a stage
-        (let ((cur-data (pop (dhold-data dhold))))
-          (setf (car (dhold-data dhold))
-                (append (car (dhold-data dhold))
-                        (list cur-data)))))
+        ;;reduce data back a original stage
+        (loop
+           for i from 0 to (- (length (dhold-data dhold)) data-count 1)
+           do (let ((cur-data (pop (dhold-data dhold))))
+                (setf (car (dhold-data dhold))
+                      (append (car (dhold-data dhold))
+                              (list cur-data))))))
       ;;atoms
       (setf (car (dhold-data dhold)) 
             (append (car (dhold-data dhold)) (list arg)))))
@@ -60,6 +56,8 @@
         ;;string
         (:string  
          (string-encode (second args) (third args) dhold))
+        (:cstring
+         (cstring-encode (second args) (third args) dhold))
     
         ;;intermixed Lisp code
         (t (handle-lisp args dhold arg))
@@ -91,7 +89,7 @@
         (:float   
          (float-decode (second args) (third args) (fourth args) dhold))
         ;;string
-        (:string  
+        ((:string :cstring)
          (string-decode (second args) (third args) (fourth args) dhold))
     
         ;;intermixed Lisp code

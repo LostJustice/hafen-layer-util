@@ -141,7 +141,7 @@
                 (format t "  Encoding Layer[~A#~A]...~%" (layer-name layer-cb) 
                         i))
               ;;encode layer name
-              (write-sequence (str->ubarr (layer-sname layer-cb)) out-io)
+              (write-sequence (str->ubarr (layer-sname layer-cb) t) out-io)
               ;;encode its data
               (funcall (symbol-function (layer-encode-func layer-cb))
                        (concatenate 'string

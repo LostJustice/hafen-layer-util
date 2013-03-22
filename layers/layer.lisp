@@ -68,7 +68,8 @@
           (with-open-file (,(fourth args) (concatenate 'string
                                                        in-file
                                                        ".data")
-                            :direction :input)
+                            :direction :input
+                            :external-format :utf-8)
             (remove-bom ,(fourth args))
             (encoder (,(third args) ,(fourth args))
               ,@body))

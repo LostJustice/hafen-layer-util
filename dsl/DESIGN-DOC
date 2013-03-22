@@ -99,7 +99,16 @@ string NAME
  - Decode Interpretation: (setf off (rw-str BUF OFF IO ";NAME (float):"))
  Encoding:
  - reads in a null(0) terminated string from BUFFER and writes to IO
- - Encode Interpretation: (rstre IO BUFFER)
+ - writes it in non \0 terminated format
+ - Encode Interpretation: (rstre IO BUFFER nil)
+
+cstring NAME
+  Decoding:
+  - See `string'
+  Encoding
+  - reads in a null(0) terminated string from BUFFER and writes to IO
+  - writes it in \0 terminated format
+  - Encode Interpretation: (rstre IO BUFFER t)
 =================
 =================
 Variables:

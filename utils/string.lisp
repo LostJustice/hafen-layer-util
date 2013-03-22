@@ -21,7 +21,7 @@
     (write-sequence str io)
     (newline io)
     (values noff
-            str)))
+            (babel:octets-to-string str))))
 
 (defun rw-strs (buf off io fmt lst)
   "Series of rw-str"
@@ -33,18 +33,26 @@
   off)
 
 ;;;Folder->Binary utils
-(defun str->ubarr (str)
+(defun str->ubarr (str null-term)
   "Convert string into \0 terminated unsigned-byte array"
-  (concatenate 'vector
-               (string-to-octets str :encoding :utf-8)
-               #(0)))
+  (if null-term
+      (concatenate 'vector
+                   (string-to-octets str :encoding :utf-8)
+                   #(0))
+      (string-to-octets str :encoding :utf-8)))
 
-(defun stre (str buffer)
+(defun stre (str buffer null-term)
   "Shortcut for encoding a STR and pushing it into the BUFFER"
-  (doarr (byte (str->ubarr str))
+  (doarr (byte (str->ubarr str null-term))
     (vector-push-extend byte buffer)))
+
+
+(defun rcstre (io buffer)
+  "Shortcut for Reading a String from IO, Encoding it with \0 at end and then pushing 
+it onto the BUFFER"
+  (stre (readin-next io) buffer t))
 
 (defun rstre (io buffer)
   "Shortcut for Reading a String from IO, Encoding it and then pushing it onto
 the BUFFER"
-  (stre (readin-next io) buffer))
+  (stre (readin-next io) buffer nil))

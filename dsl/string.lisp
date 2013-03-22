@@ -46,7 +46,7 @@
         (setf (car (dhold-data dhold))
               (append (car (dhold-data dhold))
                       `( ((,(dhold-lflag dhold) (readin-next ,io)))
-                         (stre ,(dhold-lflag dhold) ,buffer) ))) 
+                         (stre ,(dhold-lflag dhold) ,buffer nil) ))) 
         (setf (dhold-lflag dhold) nil))
       (setf (car (dhold-data dhold))
             (append (car (dhold-data dhold))

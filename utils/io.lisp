@@ -65,16 +65,17 @@
 ;;;Folder input operations
 (defun readin-next (io &optional (limit -1))
   "Reads in our next string input from IO-stream and returns it"
-  (let ((buf ""))
+  (let ((buf :eof)
+        (lines 0))
     (do ((ln (read-line io nil :eof)
-             (read-line io nil :eof))
-         (lines 0 (1+ lines)))
+             (read-line io nil :eof)))
         ((eq ln :eof))
       ;;non-comments only
       (when (or (zerop (length ln))
                 (char/= (char ln 0) #\;))
+        (incf lines)
         ;;resolve buf
-        (if (plusp (length buf))
+        (if (stringp buf)
             (setf buf (concatenate 'string buf (string #\NewLine) ln))
             (setf buf ln))
         

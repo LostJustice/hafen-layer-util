@@ -52,9 +52,9 @@
 (defun readin-float (io)
   "Reads in a float from the IO-stream"
   (let ((float (readin-next io 1)))
-    (if (zerop (length float))
-        :eof
-        (read-from-string float))))
+    (if (stringp float)
+        (read-from-string float)
+        :eof)))
 
 ;;Surely there's a better way to do this...
 ;;Note: Float accuracy is not very good in the .0000######

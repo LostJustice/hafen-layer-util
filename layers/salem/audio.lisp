@@ -9,4 +9,4 @@
   ;;Audio Layer
   ;;Contains: #.ogg, binary file
   (:defnone-binary (in-file io buffer) ()
-    (push-file-to-buffer (buffer (concatenate 'string in-file ".ogg")))))
+    (push-file-to-buffer buffer (concatenate 'string in-file ".ogg"))))

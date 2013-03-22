@@ -60,9 +60,9 @@
 (defun readin-int (io)
   "Reads in an integer from the IO-stream"
   (let ((int (readin-next io 1)))
-    (if (zerop (length int))
-        :eof
-        (parse-integer int))))
+    (if (stringp int)
+        (parse-integer int)
+        :eof)))
 
 
 (defun int->ubarr (int bytes)
