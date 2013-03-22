@@ -2,4 +2,4 @@
 
 (progn
   (setf *resource-sig* "Haven Resource 1")
-  (setf *resource-sig-octets* (string-to-octets *resource-sig*)))
+  (setf *resource-sig-octets* (str->ub *resource-sig*)))

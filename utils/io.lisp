@@ -37,7 +37,7 @@
 (defun write-str (str stream)
   "Writes a string to a binary stream"
   (write-sequence
-   (babel:string-to-octets str :encoding :utf-8)
+   (str->ub str)
    stream)
   (newline stream))
 

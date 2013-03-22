@@ -264,6 +264,8 @@ Possible KEYS include:
     (setf lst (append lst (list (subseq str start))))
     lst))
 
+
+#+sbcl 
 (defun bootstrap ()
   "salem-layer-util version - 1.0.0
 Usage: (salem-layer-util:run KEYS)

@@ -8,7 +8,7 @@
                           :initial-element 0
                           :element-type '(unsigned-byte 8)))
         (off 0))
-    (doarr (char (babel:string-to-octets layern :encoding :utf-8))
+    (doarr (char (str->ub layern))
       (setf (aref nbuf off) char)
       (incf off))
     (incf off)

@@ -4,11 +4,12 @@
     :author "Corey Furmanski"
     :license "MIT"
     :description "A general purpose layered-file resource utility"
-    :depends-on ()
+    :depends-on (:alexandria)
     :components ((:file "packages")
+                 (:file "utils/utf" :depends-on ("packages"))
                  ;;globals
                  (:file "const"
-                        :depends-on ("packages"))
+                        :depends-on ("utils/utf"))
                  ;;utils
                  (:file "utils/macros" :depends-on ("const"))
                  (:file "utils/io" :depends-on ("utils/macros"))
@@ -16,7 +17,7 @@
                  (:file "utils/int" :depends-on ("utils/io"))
                  (:file "utils/float" :depends-on ("utils/io"))
                  ;;dsl code
-                 (:file "dsl/common")
+                 (:file "dsl/common" :depends-on ("packages"))
                  (:file "dsl/int-8" :depends-on ("dsl/common"))
                  (:file "dsl/int-16" :depends-on ("dsl/common"))
                  (:file "dsl/int-32" :depends-on ("dsl/common"))
@@ -48,8 +49,9 @@
                  (:file "layers/layer" :depends-on ("utils/io"
                                                     "utils/int"
                                                     "utils/string"
-                                                    "utils/float"))
-                 (:file "layers/unknown" :depends-on ("utils/io"))
+                                                    "utils/float"
+                                                    "dsl/dsl"))
+                 (:file "layers/unknown" :depends-on ("layers/layer"))
                  
                  ;;logic
                  (:file "resource" 
