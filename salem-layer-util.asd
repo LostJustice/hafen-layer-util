@@ -3,8 +3,8 @@
     :name "salem-layer-util"
     :author "Corey Furmanski"
     :license "MIT"
-    :description "A resource utility for Salem"
-    :depends-on (:babel :alexandria)
+    :description "A general purpose layered-file resource utility"
+    :depends-on ()
     :components ((:file "packages")
                  ;;globals
                  (:file "const"

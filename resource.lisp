@@ -19,7 +19,7 @@
     (when *verbose*
       (format t " Scanning ~A~%" in-file))
     ;;Check for HNH/Salem file sig, abort if not valid
-    (when (string/= *resource-sig* (octets-to-string 
+    (when (string/= *resource-sig* (ub->str 
                                     (read-times in (length 
                                                     *resource-sig-octets*))))
       (format t " ~A is not a valid resource file.~%" in-file)
