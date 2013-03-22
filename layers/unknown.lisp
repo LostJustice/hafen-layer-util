@@ -25,9 +25,8 @@
                             :element-type '(unsigned-byte 8)
                             :adjustable t
                             :fill-pointer 0)))
-    (push-file-to-buffer buffer (concatenate 'string in-file ".unknown"))
+    (push-file-to-buffer buffer in-file)
     (when *verbose*
       (format t "   Layer: ~A~%" in-file)
       (format t "   Len  : ~A~%" (length buffer)))
-    (write-sequence (int->ubarr (length buffer) 4) io)
     (write-sequence buffer io)))

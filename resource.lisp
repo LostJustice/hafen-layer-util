@@ -49,7 +49,7 @@
             (progn
               (when *verbose*
                 (format t " String: ~A~%" sbuf))
-              (let ((layer (gethash (intern (nstring-upcase sbuf)) 
+              (let ((layer (gethash (intern (string-upcase sbuf)) 
                                     *layers-table*))
                     (len (ubarr->uint (read-times in *layer-len-size*))))
                 ;;check if layer
@@ -132,20 +132,24 @@
                                           (car (last 
                                                 (pathname-directory layer)))))
                                  *layers-table*)))
-          (when (and (null (pathname-type layer))
-                     (null (pathname-name layer))
-                     (not (null layer-cb)))
-            ;;encode data 
-            (dotimes (i (1+ (solve-high layer)))
-              (when *verbose*
-                (format t "  Encoding Layer[~A#~A]...~%" (layer-name layer-cb) 
-                        i))
-              ;;encode layer name
-              (write-sequence (str->ubarr (layer-sname layer-cb) t) out-io)
-              ;;encode its data
-              (funcall (symbol-function (layer-encode-func layer-cb))
-                       (concatenate 'string
-                                    (namestring layer)
-                                    "/"
-                                    (write-to-string i))
-                       out-io))))))))
+          (if (layer-p layer-cb)
+              ;;encode data 
+              (dotimes (i (1+ (solve-high layer)))
+                (when *verbose*
+                  (format t "  Encoding Layer[~A#~A]...~%" (layer-name layer-cb) 
+                          i))
+                ;;encode layer name
+                (write-sequence (str->ubarr (layer-sname layer-cb) t) out-io)
+                ;;encode its data
+                (funcall (symbol-function (layer-encode-func layer-cb))
+                         (concatenate 'string
+                                      (namestring layer)
+                                      "/"
+                                      (write-to-string i))
+                         out-io))
+              ;;encode unknown if so
+              (when (string= "unknown" (pathname-type layer))
+                (when *verbose*
+                  (format t "  Encoding Layer(unknown layer)...~%"))
+                (unknown-layer-encode (namestring layer)
+                                      out-io))))))))
