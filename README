@@ -5,18 +5,23 @@ Salem Layer Util is a resource utility for decoding and encoding the Salem resou
 
 Install
 =======
-It's written in Common Lisp using Babel package.
-You'll need to find yourself a Common Lisp compiler of your choice (SBCL,CMUCL,CLISP, etc)
+There's two different approaches you can choose from.
+
+The first requires you to find yourself a Common Lisp compiler of your choice (SBCL,CMUCL,CLISP, etc) and follow the following:
 
 * cd "location-to-install"
 * git clone git://github.com/boshaw/salem-layer-util.git
 * sbcl
 * (asdf:operate 'asdf:load-op 'salem-layer-util)
 
+Alternately you can run it through the abcl.jar provided by using run-abcl.{bat,sh}
+depending on the OS you use. This should load up the files needed for you and let you
+get straight to usage. 
+
 Usage
 =====
-* Start up sbcl in the directory in the directory you wish to work relative from
-(salem-layer-util:run KEYS)
+* Start up sbcl/run-abcl in the directory in the directory you wish to work relative from
+(salem-layer-util:run KEYS) or (slu:run KEYS)
 Possible KEYS include:
  (:mode              Determines the mode of the program 
                       [DEFAULT-VALUE: :d]
@@ -39,6 +44,9 @@ Possible KEYS include:
  (:threads n)        Number of threads to execute decoding/encoding of files 
                       [DEFAULT-VALUE: 1]
                       As of right now threads key doesn't change anything.
+ (:layers "path-to-layers") Tells the layer-util what layer files it should load for
+                             decoding and encoding
+                             [DEFAULT-VALUE: "layers/salem"] 
  (:args '(...))      A list of arguments for the mode given
 
 Sample Usage:
@@ -46,8 +54,10 @@ Sample Usage:
 (salem-layer-util:run :mode :d
                       :args '("res/1.res" "res/2.res"))
 ;;Decode all res/cache files from res folder into dec folder
+;; using hnh layers instead of salem
 (salem-layer-util:run :mode :da
                       :skip-old nil
+                      :layers "layers/hnh"
                       :args '("res" "dec"))
 ;;Encode only new res/cache files from dec folder into res folder
 (salem-layer-util:run :mode :ea

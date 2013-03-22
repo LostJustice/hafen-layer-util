@@ -1,6 +1,7 @@
 (require 'asdf)
 
 (progn
+  (declaim (optimize (speed 3)))
   (push
    (make-pathname :device (pathname-device *default-pathname-defaults*)
                   :directory (append (pathname-directory *default-pathname-defaults*)
