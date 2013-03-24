@@ -3,6 +3,15 @@
 (defparameter *skip-old* t)
 (defparameter *print-skip* nil)
 
+(defun fix-file-name (in-fold out-fold file)
+  "Correctly generates the correct pathname for the file"
+  (ensure-directories-exist out-fold)
+  (let* ((real-in (probe-file in-fold))
+         (real-out (probe-file out-fold)))
+    (concatenate 'string
+                 (namestring real-out)
+                 (subseq (namestring file) (length (namestring real-in))))))
+
 ;;;file utils
 (defun solve-files-1 (folder)
   "Finds all RES and CACHE files within specified folder"
@@ -69,18 +78,10 @@
 ;;D
 (defun decode-file (files out-fold)
   (dolist (file files)
-    (let ((out-file file))
-      ;;check if user gave absolute pathnames
-      (when (/= 0 (search (directory-namestring file) 
-                         (directory-namestring *default-pathname-defaults*)))
-        (setf out-file (subseq (directory-namestring file)
-                               (length (directory-namestring
-                                        *default-pathname-defaults*)))))
-      ;;resolve
-      (setf out-file (concatenate 'string
-                                  out-fold
-                                  out-file
-                                  "/"))
+    (let* ((real-file (probe-file file))
+           (name (pathname-name real-file))
+           (out-file (concatenate 'string out-fold name ".res/")))
+
       (when *verbose* 
         (format t "IN:~A~%OUT:~A~%" file out-file))
       ;;Considering the user chose this file to be decoded, skipping 
@@ -100,28 +101,10 @@
       (when (not *verbose*)
         (format t "File: ~A/~A~%" i len))
       ;;resolve output location
-      (let ((outf  (subseq (directory-namestring file)
-                           (length (directory-namestring 
-                                    *default-pathname-defaults*))))
-            (out-file ""))
-        (if (search in-fold outf :test #'equalp)
-            (setf out-file (concatenate 'string
-                                        out-fold
-                                        "/"
-                                        (subseq outf (length in-fold))
-                                        "/"
-                                        (pathname-name file)
-                                        ".res/"))
-            (setf out-file (concatenate 'string
-                                        out-fold
-                                        "/"
-                                        outf
-                                        "/"
-                                        (pathname-name file)
-                                        ".res/")))
+      (let ((out-file (concatenate 'string (fix-file-name in-fold out-fold file) "/")))  
         ;;check timestamps
         (if (or (not *skip-old*)
-              (> (get-date file) (get-date out-file)))
+                (> (get-date file) (get-date out-file)))
             (load-resource-by-res file out-file)
             (when *print-skip*
               (format t "Skipping: ~A, too old.~%" file)))))))
@@ -131,22 +114,13 @@
   ;;loop through entire list
   (dolist (file files)
     ;;resolve output location
-    (let ((out-file file))
-      ;;remove absolute
-      (unless (null (search (directory-namestring file) 
-                            (directory-namestring 
-                             *default-pathname-defaults*)))
-        (setf out-file (subseq (directory-namestring file)
-                               (length (directory-namestring
-                                        *default-pathname-defaults*)))))
-      ;;resolve
-      (setf out-file (concatenate 'string
-                                  out-fold
-                                  (subseq out-file 0 (1- (length out-file)))))
+    (let ((out-file (concatenate 'string
+                                 out-fold
+                                 "/"
+                                 (car (last (pathname-directory (probe-file file)))))))
       (when *verbose* 
         (format t "IN:~A~%OUT:~A~%" file out-file))
       (load-resource-by-folder file out-file))))
-
 
 ;;EA
 (defun encode-files (files in-fold out-fold)
@@ -162,22 +136,7 @@
         (format t "File: ~A/~A~%" i len))
        
       ;;resolve output location
-      (let ((outf (subseq (directory-namestring file)
-                          (length (directory-namestring 
-                                   *default-pathname-defaults*))))
-            (out-file ""))
-        (if (search in-fold outf)
-            (setf out-file 
-                  (concatenate 'string
-                               out-fold
-                               "/"
-                               (subseq outf
-                                       (length in-fold))))
-            (setf out-file
-                  (concatenate 'string
-                               out-fold
-                               "/"
-                               outf)))
+      (let ((out-file (fix-file-name in-fold out-fold file)))
         (setf out-file (subseq out-file 0 (1- (length out-file))))
         ;;check timestamps
         (if (or (not *skip-old*)
