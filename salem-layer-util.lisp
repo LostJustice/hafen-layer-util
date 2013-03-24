@@ -205,10 +205,10 @@ Possible KEYS include:
   (case mode
     (:d  (decode-file args "dout/"))
     (:e  (encode-file args "dres/"))
-    (:da (decode-files (car (solve-files (car args) threads)) 
+    (:da (decode-files (solve-files-1 (car args)) 
                        (car (cdr args))
                        (car args)))
-    (:ea (encode-files (car (solve-files (car args) threads))
+    (:ea (encode-files (solve-files-1 (car args))
                        (car args)
                        (car (cdr args))))))
 
