@@ -15,7 +15,7 @@
   ;;    float - ay
   ;;    float - az
   ;;  (opcode = 2):
-  ;;    string - bonenm
+  ;;    cstring - bonenm
   ;;  (opcode = 3):
   ;;    float - rx1
   ;;    float - ry1
@@ -29,7 +29,7 @@
       (case op
         (0 :float ("x" "y" "z"))
         (1 :float ("ang" "ax" "ay" "az"))
-        (2 :string "bonenm")
+        (2 :cstring "bonenm")
         (3 :float ("rx1" "ry1" "rz1")
            :cstring ("orignm" "tgtnm"))
         (t (error "boneoff-layer: invalid opcode")))))
