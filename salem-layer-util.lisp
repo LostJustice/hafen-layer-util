@@ -113,6 +113,7 @@
   (values files out-fold)
   ;;loop through entire list
   (dolist (file files)
+    (setf file (concatenate 'string file "/"))
     ;;resolve output location
     (let ((out-file (concatenate 'string
                                  out-fold
