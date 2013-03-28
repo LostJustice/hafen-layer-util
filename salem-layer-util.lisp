@@ -205,12 +205,16 @@ Possible KEYS include:
   (case mode
     (:d  (decode-file args "dout/"))
     (:e  (encode-file args "dres/"))
-    (:da (decode-files (solve-files-1 (car args)) 
-                       (car (cdr args))
-                       (car args)))
-    (:ea (encode-files (solve-files-1 (car args))
-                       (car args)
-                       (car (cdr args))))))
+    (:da (let ((fix-in (concatenate 'string (car args) "/"))
+               (fix-out (concatenate 'string (car (cdr args)) "/")))
+           (decode-files (solve-files-1 fix-in) 
+                         fix-out
+                         fix-in)))
+    (:ea (let ((fix-in (concatenate 'string (car args) "/"))
+               (fix-out (concatenate 'string (car (cdr args)) "/")))
+           (encode-files (solve-files-1 fix-in)
+                         fix-in
+                         fix-out)))))
 
 (defun split-by-space (str)
   (let ((lst ())
