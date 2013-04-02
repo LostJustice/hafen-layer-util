@@ -25,9 +25,9 @@
         (cond
           ((or (string= type "res")    ;.res files
                (string= type "cached") ;.cache files
-               ;;.res/.cache folder files [decoded]
+               ;;.res/.cached folder files [decoded]
                (not (null (or (search ".res" name)
-                              (search ".cache" name)))))
+                              (search ".cached" name)))))
            (push f lst))
           ((null (pathname-name f))    ; directory
            (setf lst 
@@ -145,8 +145,20 @@
             (load-resource-by-folder file out-file)
             (when *print-skip*
               (format t "Skipping: ~A, too old.~%" file)))))))
-      
-            
+
+;;CACHE->RES
+(defun rename-files (files old-ending new-ending)
+  "Renames the ending of a set of files to a new ending"
+  (dolist (file files)
+    (when (string= old-ending (pathname-type file))
+      (rename-file file 
+                   (make-pathname 
+                    :host (pathname-host file)
+                    :device (pathname-device file)
+                    :directory (pathname-directory file)
+                    :name (pathname-name file)
+                    :version (pathname-version file)
+                    :type new-ending)))))
 
 (defun load-layers (layer-dir)
   (let ((config (concatenate 'string layer-dir "/common.lisp"))
@@ -178,7 +190,9 @@ Possible KEYS include:
     :e              Encodes file(s) given through ARGS by list of pathnames
                      default output folder: dres
     :da             Decodes a set of files within a specified directory into another
-    :ea             Encodes a set of files within a specified directory into another)
+    :ea             Encodes a set of files within a specified directory into another
+    :cache->res     Renames a set of files ending with *.cache to *.res within a 
+                    specified directory)
    Note: for :da and :ea the two directories needed should be provided through &key args
          first arg within the args list should be source-folder
          second arg within the args list should be result-folder
@@ -215,7 +229,10 @@ Possible KEYS include:
                (fix-out (concatenate 'string (car (cdr args)) "/")))
            (encode-files (solve-files-1 fix-in)
                          fix-in
-                         fix-out)))))
+                         fix-out)))
+    (:cache->res
+     (let ((fix-in (concatenate 'string (car args) "/")))
+       (rename-files (solve-files-1 fix-in) "cached" "res")))))
 
 (defun split-by-space (str)
   (let ((lst ())
@@ -242,7 +259,9 @@ Possible KEYS include:
     e              Encodes file(s) given through ARGS by list of pathnames
                      default output folder: dres
     da             Decodes a set of files within a specified directory into another
-    ea             Encodes a set of files within a specified directory into another)
+    ea             Encodes a set of files within a specified directory into another
+    cache->res     Renames a set of files ending with *.cache to *.res within a 
+                    specified directory
    Note: for :da and :ea the two directories needed should be provided through &key args
          first arg within the args list should be source-folder
          second arg within the args list should be result-folder
