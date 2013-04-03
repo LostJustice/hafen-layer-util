@@ -146,7 +146,7 @@
             (when *print-skip*
               (format t "Skipping: ~A, too old.~%" file)))))))
 
-;;CACHE->RES
+;;CACHED->RES
 (defun rename-files (files old-ending new-ending)
   "Renames the ending of a set of files to a new ending"
   (dolist (file files)
@@ -191,7 +191,7 @@ Possible KEYS include:
                      default output folder: dres
     :da             Decodes a set of files within a specified directory into another
     :ea             Encodes a set of files within a specified directory into another
-    :cache->res     Renames a set of files ending with *.cache to *.res within a 
+    :cached->res    Renames a set of files ending with *.cached to *.res within a 
                     specified directory)
    Note: for :da and :ea the two directories needed should be provided through &key args
          first arg within the args list should be source-folder
@@ -230,7 +230,7 @@ Possible KEYS include:
            (encode-files (solve-files-1 fix-in)
                          fix-in
                          fix-out)))
-    (:cache->res
+    (:cached->res
      (let ((fix-in (concatenate 'string (car args) "/")))
        (rename-files (solve-files-1 fix-in) "cached" "res")))))
 
@@ -260,7 +260,7 @@ Possible KEYS include:
                      default output folder: dres
     da             Decodes a set of files within a specified directory into another
     ea             Encodes a set of files within a specified directory into another
-    cache->res     Renames a set of files ending with *.cache to *.res within a 
+    cached->res     Renames a set of files ending with *.cached to *.res within a 
                     specified directory
    Note: for :da and :ea the two directories needed should be provided through &key args
          first arg within the args list should be source-folder

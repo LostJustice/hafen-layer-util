@@ -1,7 +1,7 @@
 Salem Layer Util
 ================
 
-Salem Layer Util is a resource utility for decoding and encoding the Salem resource files (.res/.cache)
+Salem Layer Util is a resource utility for decoding and encoding the Salem resource files (.res/.cached)
 
 Install
 =======
@@ -9,10 +9,10 @@ There's two different approaches you can choose from.
 
 The first requires you to find yourself a Common Lisp compiler of your choice (SBCL,CMUCL,CLISP, etc) and follow the following:
 
-* cd "location-to-install"
+* run your CL compiler and setup quicklisp
+* go to ~/quicklisp/local-projects
 * git clone git://github.com/boshaw/salem-layer-util.git
-* sbcl
-* (asdf:operate 'asdf:load-op 'salem-layer-util)
+* run your CL compiler and type (ql:quicklisp "salem-layer-util")
 
 Alternately you can run it through the abcl.jar provided by using run-abcl.{bat,sh}
 depending on the OS you use. This should load up the files needed for you and let you
@@ -31,7 +31,9 @@ Possible KEYS include:
     :e              Encodes file(s) given through ARGS by list of pathnames
                      default output folder: dres
     :da             Decodes a set of files within a specified directory into another
-    :ea             Encodes a set of files within a specified directory into another)
+    :ea             Encodes a set of files within a specified directory into another
+    :cached->res    Renames a set of files withina  specified directory from *.cached
+                    to *.res)
    Note: for :da and :ea the two directories needed should be provided through &key args
          first arg within the args list should be source-folder
          second arg within the args list should be result-folder
