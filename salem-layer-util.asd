@@ -56,5 +56,7 @@
                  ;;logic
                  (:file "resource" 
                         :depends-on ("layers/layer" "layers/unknown"))
+                 (:file "hnh-neg-fix"
+                        :depends-on ("resource"))
                  (:file "salem-layer-util" 
                         :depends-on ("resource"))))

@@ -192,7 +192,8 @@ Possible KEYS include:
     :da             Decodes a set of files within a specified directory into another
     :ea             Encodes a set of files within a specified directory into another
     :cached->res    Renames a set of files ending with *.cached to *.res within a 
-                    specified directory)
+                    specified directory
+    :hnh-fix-neg    Fixes the neg layer of selected files based off a filter)
    Note: for :da and :ea the two directories needed should be provided through &key args
          first arg within the args list should be source-folder
          second arg within the args list should be result-folder
@@ -232,7 +233,9 @@ Possible KEYS include:
                          fix-out)))
     (:cached->res
      (let ((fix-in (concatenate 'string (car args) "/")))
-       (rename-files (solve-files-1 fix-in) "cached" "res")))))
+       (rename-files (solve-files-1 fix-in) "cached" "res")))
+    (:hnh-fix-neg
+     (fix-negs (car args) (car (cdr args))))))
 
 (defun split-by-space (str)
   (let ((lst ())
@@ -262,6 +265,7 @@ Possible KEYS include:
     ea             Encodes a set of files within a specified directory into another
     cached->res     Renames a set of files ending with *.cached to *.res within a 
                     specified directory
+    hnh-fix-neg    Fixes the neg layer of selected files based off a filter
    Note: for :da and :ea the two directories needed should be provided through &key args
          first arg within the args list should be source-folder
          second arg within the args list should be result-folder
