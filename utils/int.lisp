@@ -7,6 +7,12 @@
               (+ (ash l 8) r))
           (nreverse ubarr)))
 
+(defun ubarr->int (ubarr)
+  (let ((int (ubarr->uint ubarr)))
+    (if (> int (1- (/ (expt 2 (* (length ubarr) 8)) 2)))
+        (- int (expt 2 (* 8 (length ubarr))))
+        int)))
+
 (defun read-uint (buf off bytes)
   "Read in an unsigned integer BYTES bytes from BUF@OFF"
   (values (ubarr->uint (buf->arr buf off bytes))
