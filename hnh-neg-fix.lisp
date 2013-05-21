@@ -73,16 +73,20 @@
   (rename-file (concatenate 'string (namestring file) ".new")
                file))
 
-(defun m2s (pair)
-  (cons (- (* (car pair) 2) (* (cdr pair) 2))
-        (+ (car pair) (cdr pair))))
 
-(defun fix-neg-by-m2s (file)
+(defun s2m (pair)
+  (cons (+ (/ (car pair) 4) (/ (cdr pair) 2))
+        (- (/ (cdr pair) 2) (/ (car pair) 4))))
+           
+
+(defun fix-neg-by-s2m (file)
   (let ((tmp-fn (concatenate 'string (namestring file) ".tmp")))
     (with-open-file (fd file :element-type '(unsigned-byte 8))
       (when (equalp (str->ub "Haven Resource 1")
                     (read-times fd (length "Haven Resource 1")))
-        (with-open-file (nfd tmp-fn :direction :output :element-type '(unsigned-byte 8))
+        (with-open-file (nfd tmp-fn 
+                             :direction :output 
+                             :element-type '(unsigned-byte 8))
           (write-sequence (str->ub "Haven Resource 1") nfd)
           (write-sequence (read-times fd *version-size*) nfd)
         (loop
@@ -121,8 +125,8 @@
                             (roff-y (ubarr->int offset-y))
                             (rsz-x (ubarr->int size-x))
                             (rsz-y (ubarr->int size-y))
-                            (new-off (m2s (cons roff-x roff-y)))
-                            (new-sz (m2s (cons rsz-x rsz-y)))
+                            (new-off (s2m (cons roff-x roff-y)))
+                            (new-sz (s2m (cons rsz-x rsz-y)))
                             (new-off-x (int->ubarr (car new-off) 2))
                             (new-off-y (int->ubarr (cdr new-off) 2))
                             (new-sz-x (int->ubarr (car new-sz) 2))
@@ -143,6 +147,10 @@
   "Fixes the neg layers of select files based on a filter file"
   (let ((name "")
         (next-name nil))
+    ;;global run
+    (let ((files (solve-files-1 (concatenate 'string res-folder "/"))))
+      (dolist (file files)
+        (fix-neg-by-s2m file)))
     ;;filter run
     (with-open-file (fd filter-file)
       (while (not (eq name :eof))
@@ -160,8 +168,4 @@
               (multiple-value-bind (opts nn)
                   (get-neg-opts fd)
                 (fix-neg-by-filter file opts)
-                (setf next-name nn)))))))
-    ;;global run
-    (let ((files (solve-files-1 (concatenate 'string res-folder "/"))))
-      (dolist (file files)
-        (fix-neg-by-m2s file)))))
+                (setf next-name nn)))))))))
