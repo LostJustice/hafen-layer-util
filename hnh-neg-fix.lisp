@@ -75,9 +75,8 @@
 
 
 (defun s2m (pair)
-  (cons (+ (/ (car pair) 4) (/ (cdr pair) 2))
-        (- (/ (cdr pair) 2) (/ (car pair) 4))))
-           
+  (cons (floor (+ (/ (car pair) 4) (/ (cdr pair) 2)))
+        (floor (- (/ (cdr pair) 2) (/ (car pair) 4))))) 
 
 (defun fix-neg-by-s2m (file)
   (let ((tmp-fn (concatenate 'string (namestring file) ".tmp")))
