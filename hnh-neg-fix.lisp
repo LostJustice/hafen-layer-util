@@ -78,6 +78,11 @@
   (cons (floor (+ (/ (car pair) 4) (/ (cdr pair) 2)))
         (floor (- (/ (cdr pair) 2) (/ (car pair) 4))))) 
 
+(defun sub (left right)
+  (cons (- (car left) (car right))
+        (- (cdr left) (cdr right))))
+  
+
 (defun fix-neg-by-s2m (file)
   (let ((tmp-fn (concatenate 'string (namestring file) ".tmp")))
     (with-open-file (fd file :element-type '(unsigned-byte 8))
@@ -125,7 +130,7 @@
                             (rsz-x (ubarr->int size-x))
                             (rsz-y (ubarr->int size-y))
                             (new-off (s2m (cons roff-x roff-y)))
-                            (new-sz (s2m (cons rsz-x rsz-y)))
+                            (new-sz (sub (s2m (cons rsz-x rsz-y)) new-off))
                             (new-off-x (int->ubarr (car new-off) 2))
                             (new-off-y (int->ubarr (cdr new-off) 2))
                             (new-sz-x (int->ubarr (car new-sz) 2))
