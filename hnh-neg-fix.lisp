@@ -75,8 +75,8 @@
 
 
 (defun s2m (pair)
-  (cons (floor (+ (/ (car pair) 4) (/ (cdr pair) 2)))
-        (floor (- (/ (cdr pair) 2) (/ (car pair) 4))))) 
+  (cons (+ (truncate (/ (car pair) 4)) (truncate (/ (cdr pair) 2)))
+        (- (truncate (/ (cdr pair) 2)) (truncate (/ (car pair) 4))))) 
 
 (defun sub (left right)
   (cons (- (car left) (car right))
