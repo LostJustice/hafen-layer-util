@@ -1,0 +1,10 @@
+(in-package :hlu)
+
+(defmacro strcat (&rest strs)
+  `(funcall #'concatenate 'string ,@strs))
+(defmacro ntimes (n &body body)
+  (let ((i (gensym)))
+    `(dotimes (,i ,n)
+       ,@body)))
+(defmacro appendn (itm lst)
+  `(setf ,lst (append ,lst (list ,itm))))

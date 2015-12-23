@@ -1,0 +1,31 @@
+(in-package :hlu)
+
+(deflayer mesh (t)
+  (lambda (msg fn out)
+    (declare (ignore fn))
+    (decoder msg out
+      (let ((fl :uint8 "fl"))
+        (let ((num :uint16 "num (ind-length = num*3)"))
+          :int16 "matid"
+          (when (not (zerop (logand fl 2)))
+            :int16 "id")
+          (when (not (zerop (logand fl 4)))
+            :int16 "ref")
+          (when (not (zerop (logand fl (lognot 7))))
+            (error "Invalid fl in mesh"))
+          (dotimes (i (* 3 num))
+            :uint16 ((format nil "ind[~A]" i)))))))
+  (lambda (fn out in)
+    (declare (ignore fn))
+    (encoder in out
+      (let ((fl :uint8))
+        (let ((num :uint16))
+          :int16
+          (when (not (zerop (logand fl 2)))
+            :int16)
+          (when (not (zerop (logand fl 4)))
+            :int16)
+          (when (not (zerop (logand fl 7)))
+            (error "Invalid fl in mesh"))
+          (ntimes (* 3 num)
+            :uint16))))))
