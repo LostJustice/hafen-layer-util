@@ -4,9 +4,6 @@
 ;; uint8,uint16,uint32,uint64
 ;; int8,int16,int32,int64
 ;; string
-                 :string ((format nil "fln[~A]" i))
-                 :uint16 ((format nil "flv[~A]" i))
-                 :uint8  ((format nil "flw[~A]" i)))
 ;; coord
 ;; color
 ;; float32

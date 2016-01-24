@@ -13,18 +13,18 @@
 [x] audio2
 [x] midi
 [x] font
-[ ] skel
-[ ] skan
-[ ] boneoff
-[ ] slink
 [x] tex
-[ ] vbuf2
-[ ] vbuf
 [x] foodev
 [x] clamb
 [x] mesh
 [x] light
-[ ] mat
 [x] mat2
-[ ] manim
+[decode] manim
+[decode] vbuf2
 [ ] rlink
+[ ] skel
+[ ] skan
+[ ] boneoff
+[ ] slink
+[ ] mat   (Salem mat layer)
+[ ] vbuf  (Salem mat layer)

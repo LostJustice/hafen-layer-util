@@ -25,7 +25,7 @@
 
 (defun load-layers (lfold)
   (let ((files (directory
-                (make-pathname :directory lfold
+                (make-pathname :directory `(:relative ,lfold)
                                :name :wild
                                :type "lisp"))))
     (dolist (f files)
@@ -47,10 +47,10 @@
           (setf *saw* 0)
           (dolist (f files)
             (sb-concurrency:send-message *worker-tasks* f))
-          ;(ntimes 3
-           ; (sb-thread:make-thread
-            ; #'worker-encode-fun
-            ; :arguments `(,out-folder ,in-folder)))
+          (ntimes 3
+            (sb-thread:make-thread
+             #'worker-encode-fun
+             :arguments `(,out-folder ,in-folder)))
           (worker-encode-fun out-folder in-folder))
         (progn
           ;;spawn readers
@@ -60,9 +60,17 @@
             (sb-concurrency:send-message *io-tasks* f))
           (setf *saw* 0)
           ;;spawn de/encoders
-          ;(ntimes 3
-          ;  (sb-thread:make-thread
-          ;   #'worker-decode-fun
-          ;   :arguments `(,out-folder ,in-folder)))
+          (ntimes 3
+            (sb-thread:make-thread
+             #'worker-decode-fun
+             :arguments `(,out-folder ,in-folder)))
           ;;master becomes a decoder
           (worker-decode-fun out-folder in-folder)))))
+
+
+(defun bootstrap ()
+  (run (intern (nth 1 sb-ext:*posix-argv*) :keyword)
+       (nth 2 sb-ext:*posix-argv*)
+       (nth 3 sb-ext:*posix-argv*)
+       (nth 4 sb-ext:*posix-argv*))
+  (sb-ext:exit :code 0))

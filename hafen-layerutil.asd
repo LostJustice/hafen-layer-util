@@ -11,7 +11,7 @@
   :serial t
   :components ((:file "package")
                (:file "macros" :depends-on ("package"))
-               (:file "utf" :depends-on ("package macros"))
+               (:file "utf" :depends-on ("macros"))
                (:file "message" :depends-on ("utf"))
                (:file "reader" :depends-on ("utf"))
                (:file "dsl" :depends-on ("message"))
